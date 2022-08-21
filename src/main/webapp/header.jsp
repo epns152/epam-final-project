@@ -15,6 +15,7 @@
             <div>
                 <a href="/users">Users</a>
                 <a href="/accounts-to-unblock">Accounts to unblock</a>
+                <a href="/sign-out">SignOut</a>
             </div>
         </c:when>
         <c:otherwise>
@@ -23,7 +24,7 @@
                 <a <c:if test="${active==2}">class="active"</c:if>  href="/accounts">My accounts</a>
                 <a <c:if test="${active==3}">class="active"</c:if> href="/payments">My payments</a>
                 <a <c:if test="${active==4}">class="active"</c:if> href="/profile">Profile</a>
-                <a href="/SignOut">SignOut</a>
+                <a href="/sign-out">SignOut</a>
             </div>
         </c:otherwise>
     </c:choose>

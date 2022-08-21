@@ -25,6 +25,7 @@ public class UserAccounts extends HttpServlet {
             AdminDAO adminDAO = new AdminDAOImpl();
             ArrayList<Account> accounts = adminDAO.getAllUserAccounts(Integer.parseInt(req.getParameter("userId")));
             req.getSession().setAttribute("accounts", accounts);
+            req.getSession().setAttribute("userId", Integer.parseInt(req.getParameter("userId")));
             req.getRequestDispatcher("/adminInfo.jsp").forward(req, resp);
         } else resp.sendError(404, "not logged");
     }

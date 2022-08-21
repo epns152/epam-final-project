@@ -11,8 +11,8 @@ public class AdminDAOImpl implements AdminDAO {
     @Override
     public ArrayList<User> getAllUsers() {
         ArrayList<User> users = new ArrayList<>();
-        String query = "SELECT id, firstname, lastname, user_status, user_role, registration_date" +
-                "FROM users WHERE user_role = customer;";
+        String query = "SELECT id, firstname, lastname, user_status, user_role, registration_date " +
+                "FROM users WHERE user_role = 'customer';";
         try (Connection con = ConnectionPool.getInstance().getConnection()) {
             PreparedStatement preparedStatement = con.prepareStatement(query);
             ResultSet resultSet;
@@ -35,7 +35,7 @@ public class AdminDAOImpl implements AdminDAO {
     @Override
     public ArrayList<Payment> getAllUserPayments(int userId) {
         ArrayList<Payment> payments = new ArrayList<>();
-        String query = "SELECT id, price, name, creation_date, payment_status, account_id" +
+        String query = "SELECT id, price, payment_name, creation_date, payment_status, account_id " +
                 "FROM payments WHERE users_id = ?;";
         try (Connection con = ConnectionPool.getInstance().getConnection()) {
             PreparedStatement preparedStatement = con.prepareStatement(query);
@@ -61,7 +61,7 @@ public class AdminDAOImpl implements AdminDAO {
     @Override
     public ArrayList<Account> getAllUserAccounts(int userId) {
         ArrayList<Account> accounts = new ArrayList<>();
-        String query = "SELECT id, account_name, balance_amount, unblock_request, account_status" +
+        String query = "SELECT id, account_name, balance_amount, unblock_request, account_status " +
                 "FROM accounts WHERE Users_id = ?;";
         try (Connection con = ConnectionPool.getInstance().getConnection()) {
             PreparedStatement preparedStatement = con.prepareStatement(query);
@@ -84,7 +84,7 @@ public class AdminDAOImpl implements AdminDAO {
 
     @Override
     public boolean blockUser(int userId) {
-        String query = "update users set user_status = blocked where id = ?";
+        String query = "update users set user_status = 'blocked' where id = ?";
         try (Connection con = ConnectionPool.getInstance().getConnection()) {
             PreparedStatement preparedStatement = con.prepareStatement(query);
             preparedStatement.setInt(1, userId);
@@ -97,7 +97,7 @@ public class AdminDAOImpl implements AdminDAO {
 
     @Override
     public boolean unblockUser(int userId) {
-        String query = "update users set user_status = unblocked where id = ?";
+        String query = "update users set user_status = 'unblocked' where id = ?";
         try (Connection con = ConnectionPool.getInstance().getConnection()) {
             PreparedStatement preparedStatement = con.prepareStatement(query);
             preparedStatement.setInt(1, userId);
@@ -110,7 +110,7 @@ public class AdminDAOImpl implements AdminDAO {
 
     @Override
     public boolean blockAccount(int accountId) {
-        String query = "update accounts set account_status = blocked where id = ?";
+        String query = "update accounts set account_status = 'blocked' where id = ?";
         try (Connection con = ConnectionPool.getInstance().getConnection()) {
             PreparedStatement preparedStatement = con.prepareStatement(query);
             preparedStatement.setInt(1, accountId);
@@ -123,7 +123,7 @@ public class AdminDAOImpl implements AdminDAO {
 
     @Override
     public boolean unblockAccount(int accountId) {
-        String query = "update accounts set account_status = unblocked where id = ?";
+        String query = "update accounts set account_status = 'unblocked', unblock_request = 0 where id = ?";
         try (Connection con = ConnectionPool.getInstance().getConnection()) {
             PreparedStatement preparedStatement = con.prepareStatement(query);
             preparedStatement.setInt(1, accountId);
@@ -137,7 +137,7 @@ public class AdminDAOImpl implements AdminDAO {
     @Override
     public ArrayList<Account> getAllBlockedAccountsWithRequestToUnblock() {
         ArrayList<Account> accounts = new ArrayList<>();
-        String query = "SELECT id, account_name, balance_amount, unblock_request, account_status" +
+        String query = "SELECT id, account_name, balance_amount, unblock_request, account_status " +
                 "FROM accounts WHERE unblock_request = 1;";
         try (Connection con = ConnectionPool.getInstance().getConnection()) {
             PreparedStatement preparedStatement = con.prepareStatement(query);

@@ -30,10 +30,10 @@
             <div class="container">
                 <p>${account.toString()}</p>
                 <c:if test="${account.getStatus()=='unblocked'}">
-                    <a href="/block-account?userId=${account.getId()}&status=0">block account</a>
+                    <a href="/a-block-account?accountId=${account.getId()}&status=0">block account</a>
                 </c:if>
                 <c:if test="${account.getStatus()=='blocked' && account.getIsRequestedToUnblock()==1}">
-                    <a href="/block-account?userId=${account.getId()}&status=1">unblock account</a>
+                    <a href="/a-block-account?accountId=${account.getId()}&status=1">unblock account</a>
                 </c:if>
             </div>
         </c:forEach>

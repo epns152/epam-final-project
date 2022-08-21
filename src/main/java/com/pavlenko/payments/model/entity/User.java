@@ -24,6 +24,10 @@ public class User {
         this.id = id;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
     public String getRole() {
         return role;
     }

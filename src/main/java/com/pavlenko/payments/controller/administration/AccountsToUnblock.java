@@ -2,8 +2,6 @@ package com.pavlenko.payments.controller.administration;
 
 import com.pavlenko.payments.model.DB.AdminDAO;
 import com.pavlenko.payments.model.DB.AdminDAOImpl;
-import com.pavlenko.payments.model.DB.CustomerDAO;
-import com.pavlenko.payments.model.DB.CustomerDAOImpl;
 import com.pavlenko.payments.model.entity.Account;
 import com.pavlenko.payments.model.entity.User;
 
@@ -15,8 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 
-@WebServlet(name = "Users", value = "/users")
-public class Users extends HttpServlet {
+@WebServlet(name = "AccountsToUnblock", value = "/accounts-to-unblock")
+public class AccountsToUnblock extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (req.getSession().getAttribute("logged") != null && (boolean) req.getSession().getAttribute("logged")) {
@@ -24,10 +22,9 @@ public class Users extends HttpServlet {
             if (user.getRole().equals("customer")) {
                 resp.sendError(404, "not admin logged");
             }
-            req.getSession().setAttribute("userId", null);
             AdminDAO adminDAO = new AdminDAOImpl();
-            ArrayList<User> users = adminDAO.getAllUsers();
-            req.getSession().setAttribute("users", users);
+            ArrayList<Account> accounts = adminDAO.getAllBlockedAccountsWithRequestToUnblock();
+            req.getSession().setAttribute("accounts", accounts);
             req.getRequestDispatcher("/adminInfo.jsp").forward(req, resp);
         } else resp.sendError(404, "not logged");
     }
