@@ -23,12 +23,13 @@ public class Users extends HttpServlet {
             User user = (User) req.getSession().getAttribute("user");
             if (user.getRole().equals("customer")) {
                 resp.sendError(404, "not admin logged");
+            } else {
+                req.getSession().setAttribute("userId", null);
+                AdminDAO adminDAO = new AdminDAOImpl();
+                ArrayList<User> users = adminDAO.getAllUsers();
+                req.getSession().setAttribute("users", users);
+                req.getRequestDispatcher("/adminInfo.jsp").forward(req, resp);
             }
-            req.getSession().setAttribute("userId", null);
-            AdminDAO adminDAO = new AdminDAOImpl();
-            ArrayList<User> users = adminDAO.getAllUsers();
-            req.getSession().setAttribute("users", users);
-            req.getRequestDispatcher("/adminInfo.jsp").forward(req, resp);
         } else resp.sendError(404, "not logged");
     }
 }

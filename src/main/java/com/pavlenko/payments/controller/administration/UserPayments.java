@@ -22,11 +22,13 @@ public class UserPayments extends HttpServlet {
             User user = (User) req.getSession().getAttribute("user");
             if (user.getRole().equals("customer")) {
                 resp.sendError(404, "not admin logged");
+            } else {
+
+                AdminDAO adminDAO = new AdminDAOImpl();
+                ArrayList<Payment> payments = adminDAO.getAllUserPayments(Integer.parseInt(req.getParameter("userId")));
+                req.getSession().setAttribute("payments", payments);
+                req.getRequestDispatcher("/adminInfo.jsp").forward(req, resp);
             }
-            AdminDAO adminDAO = new AdminDAOImpl();
-            ArrayList<Payment> payments = adminDAO.getAllUserPayments(Integer.parseInt(req.getParameter("userId")));
-            req.getSession().setAttribute("payments", payments);
-            req.getRequestDispatcher("/adminInfo.jsp").forward(req, resp);
         } else resp.sendError(404, "not logged");
     }
 }

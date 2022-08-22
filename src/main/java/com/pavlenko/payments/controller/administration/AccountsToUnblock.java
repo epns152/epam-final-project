@@ -21,11 +21,12 @@ public class AccountsToUnblock extends HttpServlet {
             User user = (User) req.getSession().getAttribute("user");
             if (user.getRole().equals("customer")) {
                 resp.sendError(404, "not admin logged");
+            } else {
+                AdminDAO adminDAO = new AdminDAOImpl();
+                ArrayList<Account> accounts = adminDAO.getAllBlockedAccountsWithRequestToUnblock();
+                req.getSession().setAttribute("accounts", accounts);
+                req.getRequestDispatcher("/adminInfo.jsp").forward(req, resp);
             }
-            AdminDAO adminDAO = new AdminDAOImpl();
-            ArrayList<Account> accounts = adminDAO.getAllBlockedAccountsWithRequestToUnblock();
-            req.getSession().setAttribute("accounts", accounts);
-            req.getRequestDispatcher("/adminInfo.jsp").forward(req, resp);
         } else resp.sendError(404, "not logged");
     }
 }
