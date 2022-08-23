@@ -2,6 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <c:choose>
     <c:when test="${accounts!=null}">
+        <p>Sort by <a href="/accounts?sorted-by=id">number</a> <a href="/accounts?sorted-by=balance">balance</a> <a href="/accounts?sorted-by=name">name</a></p>
         <c:forEach var="account" items="${accounts}" >
             <div class="container">
                 <p>${account.toString()}</p>

@@ -21,7 +21,7 @@
         <c:otherwise>
             <div class="header-right">
                 <a <c:if test="${active==1}">class="active"</c:if> href="/index.jsp">Home</a>
-                <a <c:if test="${active==2}">class="active"</c:if>  href="/accounts">My accounts</a>
+                <a <c:if test="${active==2}">class="active"</c:if>  href="/accounts?sorted-by=id">My accounts</a>
                 <a <c:if test="${active==3}">class="active"</c:if> href="/payments">My payments</a>
                 <a <c:if test="${active==4}">class="active"</c:if> href="/profile">Profile</a>
                 <a href="/sign-out">SignOut</a>

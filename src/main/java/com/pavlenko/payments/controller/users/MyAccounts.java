@@ -4,6 +4,7 @@ import com.pavlenko.payments.model.DB.CustomerDAO;
 import com.pavlenko.payments.model.DB.CustomerDAOImpl;
 import com.pavlenko.payments.model.entity.Account;
 import com.pavlenko.payments.model.entity.User;
+import com.pavlenko.payments.model.services.CustomerService;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -20,11 +21,13 @@ public class MyAccounts extends HttpServlet {
         if (req.getSession().getAttribute("logged") != null && (boolean) req.getSession().getAttribute("logged")) {
             User user = (User) req.getSession().getAttribute("user");
             CustomerDAO customerDAO = new CustomerDAOImpl();
-            ArrayList<Account> accounts = customerDAO.getAccounts(user);
+            CustomerService service = new CustomerService(customerDAO);
+            String sortingCriterion = req.getParameter("sorted-by");
+            System.out.println(sortingCriterion);
+            ArrayList<Account> accounts = service.getAccountsSortedBy(user, sortingCriterion);
             req.getSession().setAttribute("accounts", accounts);
             req.getSession().setAttribute("paymentId", req.getParameter("paymentId"));
             req.getRequestDispatcher("/userInfo.jsp").forward(req, resp);
-            System.out.println(req.getParameter("paymentId"));
         } else resp.sendError(404, "not logged");
     }
 }

@@ -1,5 +1,7 @@
 package com.pavlenko.payments.model.entity;
 
+import java.util.Objects;
+
 public class Account {
     private int id;
     private double balance;
@@ -41,12 +43,27 @@ public class Account {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Account account = (Account) o;
+        return id == account.id && Double.compare(account.balance, balance) == 0 && isRequestedToUnblock == account.isRequestedToUnblock && userId == account.userId && Objects.equals(name, account.name) && Objects.equals(status, account.status);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, balance, name, status, isRequestedToUnblock, userId);
+    }
+
+    @Override
     public String toString() {
         return "Account{" +
-                "balance=" + balance +
+                "id=" + id +
+                ", balance=" + balance +
                 ", name='" + name + '\'' +
                 ", status='" + status + '\'' +
                 ", isRequestedToUnblock=" + isRequestedToUnblock +
+                ", userId=" + userId +
                 '}';
     }
 }
