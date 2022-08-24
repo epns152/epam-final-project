@@ -16,33 +16,25 @@ public class CustomerService {
     }
 
     public ArrayList<Account> getAccountsSortedBy(User user, String sortBy) {
-        ArrayList<Account> accounts = dao.getAccounts(user);
-        switch (sortBy) {
-            case "id":
-                accounts.sort(Comparator.comparing(Account::getId));
-                break;
-            case "name":
-                accounts.sort(Comparator.comparing(Account::getName));
-                break;
-            case "balance":
-                accounts.sort(Comparator.comparing(Account::getBalance));
-                break;
+        ArrayList<Account> accounts;
+        if (sortBy.equals("balance")) {
+            accounts = dao.getAccounts(user, "balance_amount");
+        } else if (sortBy.equals("name")) {
+            accounts = dao.getAccounts(user, "account_name");
+        } else {
+            accounts = dao.getAccounts(user, "id");
         }
         return accounts;
     }
 
     public ArrayList<Payment> getPaymentsSortedBy(User user, String sortBy) {
-        ArrayList<Payment> payments = dao.getPayments(user);
-        switch (sortBy) {
-            case "id":
-                payments.sort(Comparator.comparing(Payment::getId));
-                break;
-            case "price":
-                payments.sort(Comparator.comparing(Payment::getPrice));
-                break;
-            case "date":
-                payments.sort(Comparator.comparing(Payment::getDate));
-                break;
+        ArrayList<Payment> payments;
+        if (sortBy.equals("price")) {
+            payments = dao.getPayments(user, sortBy);
+        } else if (sortBy.equals("date")) {
+            payments = dao.getPayments(user, "creation_date");
+        } else {
+            payments = dao.getPayments(user, "id");
         }
         return payments;
     }

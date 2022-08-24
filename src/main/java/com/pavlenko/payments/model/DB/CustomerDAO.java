@@ -22,9 +22,9 @@ public interface CustomerDAO {
 
     boolean addPayment(int userId, String name, double price);
 
-    ArrayList<Account> getAccounts(User user);
+    ArrayList<Account> getAccounts(User user, String sortBy);
 
-    ArrayList<Payment> getPayments(User user);
+    ArrayList<Payment> getPayments(User user, String sortBy);
 
     boolean makePayment(int accountId, int paymentId);
 

@@ -23,7 +23,9 @@ public class MyAccounts extends HttpServlet {
             CustomerDAO customerDAO = new CustomerDAOImpl();
             CustomerService service = new CustomerService(customerDAO);
             String sortingCriterion = req.getParameter("sorted-by");
-            System.out.println(sortingCriterion);
+            if (sortingCriterion == null) {
+                sortingCriterion = "id";
+            }
             ArrayList<Account> accounts = service.getAccountsSortedBy(user, sortingCriterion);
             req.getSession().setAttribute("accounts", accounts);
             req.getSession().setAttribute("paymentId", req.getParameter("paymentId"));
