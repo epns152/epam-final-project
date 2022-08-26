@@ -27,6 +27,7 @@ public class CustomerDAOImpl implements CustomerDAO {
             throw new RuntimeException("Sql exc", e);
         }
     }
+
     @Override
     public boolean accountExist(String login, String pass) {
         String query = "SELECT COUNT(*) FROM users WHERE login = ? and password = ?;";

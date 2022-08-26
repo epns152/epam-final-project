@@ -25,6 +25,6 @@ public class Register extends HttpServlet {
             req.getSession().setAttribute("logged", true);
             req.getSession().setAttribute("user", customerDAO.login(login, password));
         }
-        req.getRequestDispatcher("index.jsp").forward(req, resp);
+        resp.sendRedirect("index.jsp");
     }
 }

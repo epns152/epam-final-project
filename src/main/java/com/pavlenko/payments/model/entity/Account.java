@@ -8,7 +8,6 @@ public class Account {
     private String name;
     private String status = "unblocked";
     private int isRequestedToUnblock = 0;
-    private int userId;
 
     public Account(int id, double balance, String name, String status, int isRequestedToUnblock) {
         this.id = id;
@@ -47,12 +46,12 @@ public class Account {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Account account = (Account) o;
-        return id == account.id && Double.compare(account.balance, balance) == 0 && isRequestedToUnblock == account.isRequestedToUnblock && userId == account.userId && Objects.equals(name, account.name) && Objects.equals(status, account.status);
+        return id == account.id && Double.compare(account.balance, balance) == 0 && isRequestedToUnblock == account.isRequestedToUnblock && Objects.equals(name, account.name) && Objects.equals(status, account.status);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, balance, name, status, isRequestedToUnblock, userId);
+        return Objects.hash(id, balance, name, status, isRequestedToUnblock);
     }
 
     @Override
@@ -63,7 +62,6 @@ public class Account {
                 ", name='" + name + '\'' +
                 ", status='" + status + '\'' +
                 ", isRequestedToUnblock=" + isRequestedToUnblock +
-                ", userId=" + userId +
                 '}';
     }
 }

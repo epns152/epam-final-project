@@ -1,4 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="my" uri="myTags" %>
+
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <link href="css/style1.css" rel="stylesheet">
 <div class="header">
@@ -20,12 +22,14 @@
         </c:when>
         <c:otherwise>
             <div class="header-right">
-                <a <c:if test="${active==1}">class="active"</c:if> href="/index.jsp">Home</a>
-                <a <c:if test="${active==2}">class="active"</c:if>  href="/accounts?sorted-by=id">My accounts</a>
-                <a <c:if test="${active==3}">class="active"</c:if> href="/payments?sorted-by=id">My payments</a>
-                <a <c:if test="${active==4}">class="active"</c:if> href="/profile">Profile</a>
+                <a href="/index.jsp">Home</a>
+                <a href="/accounts?sorted-by=id">My accounts</a>
+                <a href="/payments?sorted-by=id">My payments</a>
+                <a href="/profile">Profile</a>
                 <a href="/sign-out">SignOut</a>
             </div>
+            <my:first/>
+<%--            <my:param a ="asf" b = "asd"/>--%>
         </c:otherwise>
     </c:choose>
 </div>

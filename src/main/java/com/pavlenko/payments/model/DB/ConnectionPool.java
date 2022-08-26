@@ -13,6 +13,7 @@ public class  ConnectionPool {
     }
 
     private static DataSource dataSource;
+
     static {
         try {
             Context ctx;
@@ -24,7 +25,6 @@ public class  ConnectionPool {
     }
 
     public static Connection getConnection() throws SQLException {
-        Connection connection = dataSource.getConnection();
-        return connection;
+        return dataSource.getConnection();
     }
 }

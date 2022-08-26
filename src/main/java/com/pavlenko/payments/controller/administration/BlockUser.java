@@ -26,7 +26,7 @@ public class BlockUser extends HttpServlet {
                 } else if (req.getParameter("status").equals("1")) {
                     adminDAO.unblockUser(Integer.parseInt(req.getParameter("userId")));
                 }
-                req.getRequestDispatcher("/users").forward(req, resp);
+                resp.sendRedirect("/users");
             }
         } else resp.sendError(404, "not logged");
     }

@@ -24,12 +24,24 @@ public class User {
         this.id = id;
     }
 
+    public String getRole() {
+        return role;
+    }
+
+    public String getFirstname() {
+        return firstname;
+    }
+
+    public String getLastname() {
+        return lastname;
+    }
+
     public String getStatus() {
         return status;
     }
 
-    public String getRole() {
-        return role;
+    public Date getDate() {
+        return date;
     }
 
     public int getId() {

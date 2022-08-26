@@ -36,6 +36,10 @@ public class Payment {
         return date;
     }
 
+    public String getName() {
+        return name;
+    }
+
     @Override
     public String toString() {
         return "Payment{" +
