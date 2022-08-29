@@ -1,12 +1,17 @@
 package com.pavlenko.payments.model.DB;
 
+import com.pavlenko.payments.model.Main;
 import com.pavlenko.payments.model.entity.*;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
 
 public class CustomerDAOImpl implements CustomerDAO {
 
+    private static final Logger LOG = LoggerFactory.getLogger(CustomerDAOImpl.class);
     @Override
     public User getAllInfo(User user) {
         String query = "SELECT firstname, lastname, registration_date, user_status FROM users WHERE id = ? and user_role = ?;";
@@ -20,10 +25,12 @@ public class CustomerDAOImpl implements CustomerDAO {
                 String lastname = resultSet.getString(2);
                 Date regDate = resultSet.getDate(3);
                 String userStatus = resultSet.getString(4);
+                LOG.info("user info got");
                 return new User(user.getRole(), user.getId(), firstname, lastname, userStatus, regDate);
             }
             return null;
         } catch (SQLException e) {
+            LOG.error("sql exception: %s", e);
             throw new RuntimeException("Sql exc", e);
         }
     }
@@ -34,11 +41,13 @@ public class CustomerDAOImpl implements CustomerDAO {
         try (Connection con = ConnectionPool.getConnection()) {
             PreparedStatement preparedStatement = con.prepareStatement(query);
             preparedStatement.setString(1, login);
-            preparedStatement.setString(2, pass);
+            preparedStatement.setString(2, md5(pass));
             ResultSet resultSet = preparedStatement.executeQuery();
             resultSet.next();
+            LOG.info("user exist");
             return resultSet.getInt(1) > 0;
         } catch (SQLException e) {
+            LOG.error("sql exception: %s", e);
             throw new RuntimeException("Sql exc", e);
         }
     }
@@ -49,15 +58,17 @@ public class CustomerDAOImpl implements CustomerDAO {
         try (Connection con = ConnectionPool.getConnection()) {
             PreparedStatement preparedStatement = con.prepareStatement(query);
             preparedStatement.setString(1, login);
-            preparedStatement.setString(2, pass);
+            preparedStatement.setString(2, md5(pass));
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 int id = resultSet.getInt(1);
                 String role = resultSet.getString(2);
+                LOG.info("user logged");
                 return new User(role, id);
             }
             return null;
         } catch (SQLException e) {
+            LOG.error("sql exception: %s", e);
             throw new RuntimeException("Sql exc", e);
         }
     }
@@ -68,12 +79,14 @@ public class CustomerDAOImpl implements CustomerDAO {
         try (Connection con = ConnectionPool.getConnection()) {
             PreparedStatement preparedStatement = con.prepareStatement(query);
             preparedStatement.setString(1, login);
-            preparedStatement.setString(2, pass);
+            preparedStatement.setString(2, md5(pass));
             preparedStatement.setString(3, firstName);
             preparedStatement.setString(4, lastName);
             preparedStatement.executeUpdate();
+            LOG.info("user registered");
             return true;
         } catch (SQLException e) {
+            LOG.error("sql exception: %s", e);
             throw new RuntimeException("Sql exc", e);
         }
     }
@@ -87,8 +100,10 @@ public class CustomerDAOImpl implements CustomerDAO {
             preparedStatement.setDouble(2, balance);
             preparedStatement.setInt(3, userId);
             preparedStatement.executeUpdate();
+            LOG.info("account added");
             return true;
         } catch (SQLException e) {
+            LOG.error("sql exception: %s", e);
             throw new RuntimeException("Sql exc", e);
         }
     }
@@ -102,8 +117,10 @@ public class CustomerDAOImpl implements CustomerDAO {
             preparedStatement.setInt(3, accountId);
             preparedStatement.setInt(2, userId);
             preparedStatement.executeUpdate();
+            LOG.info("account blocked by user");
             return true;
         } catch (SQLException e) {
+            LOG.error("sql exception: %s", e);
             throw new RuntimeException("Sql exc", e);
         }
     }
@@ -117,8 +134,10 @@ public class CustomerDAOImpl implements CustomerDAO {
             preparedStatement.setInt(3, accountId);
             preparedStatement.setInt(2, userId);
             preparedStatement.executeUpdate();
+            LOG.info("request to unblock account by user");
             return true;
         } catch (SQLException e) {
+            LOG.error("sql exception: %s", e);
             throw new RuntimeException("Sql exc", e);
         }
     }
@@ -132,8 +151,10 @@ public class CustomerDAOImpl implements CustomerDAO {
             preparedStatement.setString(2, name);
             preparedStatement.setInt(3, userId);
             preparedStatement.executeUpdate();
+            LOG.info("payment added");
             return true;
         } catch (SQLException e) {
+            LOG.error("sql exception: %s", e);
             throw new RuntimeException("Sql exc", e);
         }
     }
@@ -156,8 +177,10 @@ public class CustomerDAOImpl implements CustomerDAO {
                 String accountStatus = resultSet.getString(5);
                 accounts.add(new Account(id, balanceAmount, accountName, accountStatus, unblockRequest));
             }
+            LOG.info("got user accounts");
             return accounts;
         } catch (SQLException e) {
+            LOG.error("sql exception: %s", e);
             throw new RuntimeException("Sql exc", e);
         }
     }
@@ -181,8 +204,10 @@ public class CustomerDAOImpl implements CustomerDAO {
                 int accountId = resultSet.getInt(6);
                 payments.add(new Payment(id, price, paymentName, date, paymentStatus, accountId));
             }
+            LOG.info("got user payments");
             return payments;
         } catch (SQLException e) {
+            LOG.error("sql exception: %s", e);
             throw new RuntimeException("Sql exc", e);
         }
     }
@@ -190,9 +215,7 @@ public class CustomerDAOImpl implements CustomerDAO {
     @Override
     public boolean makePayment(int accountId, int paymentId) {
         String query = "update accounts set balance_amount = balance_amount - " +
-                "(select price from payments where id = ? limit 1)  where id = ?;"
-//                "update payments set payment_status = 0 where id = 1;"
-                ;
+                "(select price from payments where id = ? limit 1)  where id = ?;";
         try (Connection con = ConnectionPool.getConnection()) {
             PreparedStatement preparedStatement = con.prepareStatement(query);
             preparedStatement.setInt(1, paymentId);
@@ -201,10 +224,15 @@ public class CustomerDAOImpl implements CustomerDAO {
             preparedStatement = con.prepareStatement("update payments set payment_status = 0 where id = ?;");
             preparedStatement.setInt(1, paymentId);
             preparedStatement.executeUpdate();
+            LOG.info("payment made");
             return true;
         } catch (SQLException e) {
+            LOG.error("sql exception: %s", e);
             throw new RuntimeException("Sql exc", e);
         }
     }
 
+    public static String md5(String pass) {
+        return DigestUtils.md5Hex(pass).toLowerCase();
+    }
 }

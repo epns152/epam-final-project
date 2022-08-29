@@ -6,6 +6,8 @@ import com.pavlenko.payments.model.DB.CustomerDAO;
 import com.pavlenko.payments.model.DB.CustomerDAOImpl;
 import com.pavlenko.payments.model.entity.Account;
 import com.pavlenko.payments.model.entity.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -17,19 +19,19 @@ import java.util.ArrayList;
 
 @WebServlet(name = "Users", value = "/users")
 public class Users extends HttpServlet {
+
+    private static final Logger LOG = LoggerFactory.getLogger(Users.class);
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (req.getSession().getAttribute("logged") != null && (boolean) req.getSession().getAttribute("logged")) {
-            User user = (User) req.getSession().getAttribute("user");
-            if (user.getRole().equals("customer")) {
-                resp.sendError(404, "not admin logged");
-            } else {
-                req.getSession().setAttribute("userId", null);
-                AdminDAO adminDAO = new AdminDAOImpl();
-                ArrayList<User> users = adminDAO.getAllUsers();
-                req.getSession().setAttribute("users", users);
-                req.getRequestDispatcher("/adminInfo.jsp").forward(req, resp);
-            }
+            req.getSession().setAttribute("userId", null);
+            AdminDAO adminDAO = new AdminDAOImpl();
+            ArrayList<User> users = adminDAO.getAllUsers();
+            LOG.info("made sql statement");
+            req.getSession().setAttribute("users", users);
+            req.getRequestDispatcher("/adminInfo.jsp").forward(req, resp);
+            LOG.info("redirected to /adminInfo.jsp");
         } else resp.sendError(404, "not logged");
     }
 }

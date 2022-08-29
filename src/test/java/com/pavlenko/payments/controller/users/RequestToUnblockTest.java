@@ -38,14 +38,13 @@ class RequestToUnblockTest {
         HttpServletResponse resp = mock(HttpServletResponse.class);
         HttpSession session = mock(HttpSession.class);
         User user = mock(User.class);
-        Connection connection = mock(Connection.class);
-        DataSource dataSource = mock(DataSource.class);
+        CustomerDAO dao = mock(CustomerDAO.class);
 
         when(req.getSession()).thenReturn(session);
         when(session.getAttribute("logged")).thenReturn(true);
         when(session.getAttribute("user")).thenReturn(user);
         when(req.getParameter("accountId")).thenReturn("2");
-        when(ConnectionPool.getConnection()).thenReturn(connection);
+        when(dao.requestToUnblockAccount(1, 2)).thenReturn(true);
 
         servlet.doGet(req, resp);
 

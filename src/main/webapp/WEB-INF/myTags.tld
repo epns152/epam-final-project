@@ -9,11 +9,6 @@
     <uri>http://localhost:8081</uri>
 
     <tag>
-        <name>first</name>
-        <tag-class>com.pavlenko.payments.view.MyTag</tag-class>
-    </tag>
-
-    <tag>
         <name>acc</name>
         <tag-class>com.pavlenko.payments.view.DisplayAccount</tag-class>
         <attribute>

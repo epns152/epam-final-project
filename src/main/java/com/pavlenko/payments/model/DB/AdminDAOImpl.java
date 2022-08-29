@@ -3,11 +3,16 @@ package com.pavlenko.payments.model.DB;
 import com.pavlenko.payments.model.entity.Account;
 import com.pavlenko.payments.model.entity.Payment;
 import com.pavlenko.payments.model.entity.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
 
 public class AdminDAOImpl implements AdminDAO {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AdminDAOImpl.class);
+
     @Override
     public ArrayList<User> getAllUsers() {
         ArrayList<User> users = new ArrayList<>();
@@ -26,8 +31,10 @@ public class AdminDAOImpl implements AdminDAO {
                 Date registrationDate = resultSet.getDate(6);
                 users.add(new User(userRole, id, firstname, lastname, userStatus, registrationDate));
             }
+            LOG.info("got users by admin");
             return users;
         } catch (SQLException e) {
+            LOG.error("sql exception: %s", e);
             throw new RuntimeException("Sql exc", e);
         }
     }
@@ -51,8 +58,10 @@ public class AdminDAOImpl implements AdminDAO {
                 int accountId = resultSet.getInt(6);
                 payments.add(new Payment(id, price, paymentName, date, paymentStatus, accountId));
             }
+            LOG.info("got user payments by admin");
             return payments;
         } catch (SQLException e) {
+            LOG.error("sql exception: %s", e);
             throw new RuntimeException("Sql exc", e);
         }
     }
@@ -76,8 +85,10 @@ public class AdminDAOImpl implements AdminDAO {
                 String accountStatus = resultSet.getString(5);
                 accounts.add(new Account(id, balanceAmount, accountName, accountStatus, unblockRequest));
             }
+            LOG.info("got user accounts by admin");
             return accounts;
         } catch (SQLException e) {
+            LOG.error("sql exception: %s", e);
             throw new RuntimeException("Sql exc", e);
         }
     }
@@ -89,8 +100,10 @@ public class AdminDAOImpl implements AdminDAO {
             PreparedStatement preparedStatement = con.prepareStatement(query);
             preparedStatement.setInt(1, userId);
             preparedStatement.executeUpdate();
+            LOG.info("user blocked by admin");
             return true;
         } catch (SQLException e) {
+            LOG.error("sql exception: %s", e);
             throw new RuntimeException("Sql exc", e);
         }
     }
@@ -102,8 +115,10 @@ public class AdminDAOImpl implements AdminDAO {
             PreparedStatement preparedStatement = con.prepareStatement(query);
             preparedStatement.setInt(1, userId);
             preparedStatement.executeUpdate();
+            LOG.info("user unblocked by admin");
             return true;
         } catch (SQLException e) {
+            LOG.error("sql exception: %s", e);
             throw new RuntimeException("Sql exc", e);
         }
     }
@@ -115,8 +130,10 @@ public class AdminDAOImpl implements AdminDAO {
             PreparedStatement preparedStatement = con.prepareStatement(query);
             preparedStatement.setInt(1, accountId);
             preparedStatement.executeUpdate();
+            LOG.info("account blocked by admin");
             return true;
         } catch (SQLException e) {
+            LOG.error("sql exception: %s", e);
             throw new RuntimeException("Sql exc", e);
         }
     }
@@ -128,8 +145,10 @@ public class AdminDAOImpl implements AdminDAO {
             PreparedStatement preparedStatement = con.prepareStatement(query);
             preparedStatement.setInt(1, accountId);
             preparedStatement.executeUpdate();
+            LOG.info("account unblocked by admin");
             return true;
         } catch (SQLException e) {
+            LOG.error("sql exception: %s", e);
             throw new RuntimeException("Sql exc", e);
         }
     }
@@ -151,8 +170,10 @@ public class AdminDAOImpl implements AdminDAO {
                 String accountStatus = resultSet.getString(5);
                 accounts.add(new Account(id, balanceAmount, accountName, accountStatus, unblockRequest));
             }
+            LOG.info("get all blocked accounts with request to unblock by admin");
             return accounts;
         } catch (SQLException e) {
+            LOG.error("sql exception: %s", e);
             throw new RuntimeException("Sql exc", e);
         }
     }

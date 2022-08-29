@@ -28,8 +28,6 @@
                 <a href="/profile">Profile</a>
                 <a href="/sign-out">SignOut</a>
             </div>
-            <my:first/>
-<%--            <my:param a ="asf" b = "asd"/>--%>
         </c:otherwise>
     </c:choose>
 </div>

@@ -17,7 +17,7 @@
             ${payment.getPrice()}
         </td>
         <td>
-            ${payment.getPaymentStatus()}
+            ${payment.getPaymentStatus() == 0 ? "sent" : "prepared"}
         </td>
         <td>
             ${payment.getDate()}
