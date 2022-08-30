@@ -23,14 +23,17 @@ public class UserAccounts extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        if (req.getSession().getAttribute("logged") != null && (boolean) req.getSession().getAttribute("logged")) {
-            AdminDAO adminDAO = new AdminDAOImpl();
+        AdminDAO adminDAO = new AdminDAOImpl();
+        try {
             ArrayList<Account> accounts = adminDAO.getAllUserAccounts(Integer.parseInt(req.getParameter("userId")));
             LOG.info("made sql statement");
             req.getSession().setAttribute("accounts", accounts);
             req.getSession().setAttribute("userId", Integer.parseInt(req.getParameter("userId")));
             req.getRequestDispatcher("/adminInfo.jsp").forward(req, resp);
             LOG.info("redirected to /adminInfo.jsp");
-        } else resp.sendError(404, "not logged");
+        } catch (RuntimeException e) {
+            LOG.error("Exception caught %s", e);
+            resp.sendError(500, "Sorry, something went wrong...(((");
+        }
     }
 }

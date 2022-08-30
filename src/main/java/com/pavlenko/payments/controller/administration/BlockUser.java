@@ -21,8 +21,8 @@ public class BlockUser extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        if (req.getSession().getAttribute("logged") != null && (boolean) req.getSession().getAttribute("logged")) {
-            AdminDAO adminDAO = new AdminDAOImpl();
+        AdminDAO adminDAO = new AdminDAOImpl();
+        try {
             if (req.getParameter("status").equals("0")) {
                 adminDAO.blockUser(Integer.parseInt(req.getParameter("userId")));
                 LOG.info("made sql statement");
@@ -32,6 +32,9 @@ public class BlockUser extends HttpServlet {
             }
             resp.sendRedirect("/users");
             LOG.info("redirected to /users");
-        } else resp.sendError(404, "not logged");
+        } catch (RuntimeException e) {
+            LOG.error("Exception caught %s", e);
+            resp.sendError(500, "Sorry, something went wrong...(((");
+        }
     }
 }

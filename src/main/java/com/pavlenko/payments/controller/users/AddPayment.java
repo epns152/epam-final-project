@@ -20,14 +20,17 @@ public class AddPayment extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        if (req.getSession().getAttribute("logged") != null && (boolean) req.getSession().getAttribute("logged")) {
-            User user = (User) req.getSession().getAttribute("user");
-            int userId = user.getId();
-            CustomerDAO customerDAO = new CustomerDAOImpl();
+        User user = (User) req.getSession().getAttribute("user");
+        int userId = user.getId();
+        CustomerDAO customerDAO = new CustomerDAOImpl();
+        try {
             customerDAO.addPayment(userId, req.getParameter("name"), Double.parseDouble(req.getParameter("price")));
             LOG.info("made sql statement");
             resp.sendRedirect("/payments");
             LOG.info("redirected to /payments");
-        } else resp.sendError(404, "not logged");
+        } catch (RuntimeException e) {
+            LOG.error("Exception caught %s", e);
+            resp.sendError(500, "Sorry, something went wrong...(((");
+        }
     }
 }

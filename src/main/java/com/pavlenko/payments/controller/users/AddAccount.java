@@ -21,14 +21,17 @@ public class AddAccount extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        if (req.getSession().getAttribute("logged") != null && (boolean) req.getSession().getAttribute("logged")) {
-            User user = (User) req.getSession().getAttribute("user");
-            int userId = user.getId();
-            CustomerDAO customerDAO = new CustomerDAOImpl();
+        User user = (User) req.getSession().getAttribute("user");
+        int userId = user.getId();
+        CustomerDAO customerDAO = new CustomerDAOImpl();
+        try {
             customerDAO.addAccount(userId, req.getParameter("name"), Double.parseDouble(req.getParameter("balance")));
             LOG.info("made sql statement");
             resp.sendRedirect("/accounts");
             LOG.info("redirected to /accounts");
-        } else resp.sendError(404, "not logged");
+        } catch (RuntimeException e) {
+            LOG.error("Exception caught %s", e);
+            resp.sendError(500, "Sorry, something went wrong...(((");
+        }
     }
 }

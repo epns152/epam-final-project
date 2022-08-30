@@ -24,14 +24,17 @@ public class Users extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        if (req.getSession().getAttribute("logged") != null && (boolean) req.getSession().getAttribute("logged")) {
-            req.getSession().setAttribute("userId", null);
-            AdminDAO adminDAO = new AdminDAOImpl();
+        req.getSession().setAttribute("userId", null);
+        AdminDAO adminDAO = new AdminDAOImpl();
+        try {
             ArrayList<User> users = adminDAO.getAllUsers();
             LOG.info("made sql statement");
             req.getSession().setAttribute("users", users);
             req.getRequestDispatcher("/adminInfo.jsp").forward(req, resp);
             LOG.info("redirected to /adminInfo.jsp");
-        } else resp.sendError(404, "not logged");
+        } catch (RuntimeException e) {
+            LOG.error("Exception caught %s", e);
+            resp.sendError(500, "Sorry, something went wrong...(((");
+        }
     }
 }

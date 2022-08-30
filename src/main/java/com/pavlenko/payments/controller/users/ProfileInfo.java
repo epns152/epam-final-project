@@ -20,13 +20,16 @@ public class ProfileInfo extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        if (req.getSession().getAttribute("logged") != null && (boolean) req.getSession().getAttribute("logged")) {
-            User user = (User) req.getSession().getAttribute("user");
-            CustomerDAO customerDAO = new CustomerDAOImpl();
+        User user = (User) req.getSession().getAttribute("user");
+        CustomerDAO customerDAO = new CustomerDAOImpl();
+        try {
             req.getSession().setAttribute("user", customerDAO.getAllInfo(user));
             LOG.info("made sql statement");
             req.getRequestDispatcher("/profile.jsp").forward(req, resp);
             LOG.info("forwarded to /profile.jsp");
-        } else resp.sendError(404, "not logged");
+        } catch (RuntimeException e) {
+            LOG.error("Exception caught %s", e);
+            resp.sendError(500, "Sorry, something went wrong...(((");
+        }
     }
 }

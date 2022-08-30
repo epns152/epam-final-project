@@ -23,20 +23,23 @@ public class MyAccounts extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        if (req.getSession().getAttribute("logged") != null && (boolean) req.getSession().getAttribute("logged")) {
-            User user = (User) req.getSession().getAttribute("user");
-            CustomerDAO customerDAO = new CustomerDAOImpl();
-            CustomerService service = new CustomerService(customerDAO);
-            String sortingCriterion = req.getParameter("sorted-by");
-            if (sortingCriterion == null) {
-                sortingCriterion = "id";
-            }
+        User user = (User) req.getSession().getAttribute("user");
+        CustomerDAO customerDAO = new CustomerDAOImpl();
+        CustomerService service = new CustomerService(customerDAO);
+        String sortingCriterion = req.getParameter("sorted-by");
+        if (sortingCriterion == null) {
+            sortingCriterion = "id";
+        }
+        try {
             ArrayList<Account> accounts = service.getAccountsSortedBy(user, sortingCriterion);
             LOG.info("service call");
             req.getSession().setAttribute("accounts", accounts);
             req.getSession().setAttribute("paymentId", req.getParameter("paymentId"));
             req.getRequestDispatcher("/userInfo.jsp").forward(req, resp);
             LOG.info("forwarded to /userInfo.jsp");
-        } else resp.sendError(404, "not logged");
+        } catch (RuntimeException e) {
+            LOG.error("Exception caught %s", e);
+            resp.sendError(500, "Sorry, something went wrong...(((");
+        }
     }
 }

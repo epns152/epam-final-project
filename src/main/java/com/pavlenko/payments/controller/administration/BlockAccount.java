@@ -20,8 +20,8 @@ public class BlockAccount extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        if (req.getSession().getAttribute("logged") != null && (boolean) req.getSession().getAttribute("logged")) {
-            AdminDAO adminDAO = new AdminDAOImpl();
+        AdminDAO adminDAO = new AdminDAOImpl();
+        try {
             if (req.getParameter("status").equals("0")) {
                 adminDAO.blockAccount(Integer.parseInt(req.getParameter("accountId")));
                 LOG.info("made sql statement");
@@ -36,6 +36,9 @@ public class BlockAccount extends HttpServlet {
                 req.getRequestDispatcher("/user-accounts?userId=" + (int) req.getSession().getAttribute("userId")).forward(req, resp);
                 LOG.info("forward to /user-accounts?userId=");
             }
-        } else resp.sendError(404, "not logged");
+        } catch (RuntimeException e) {
+            LOG.error("Exception caught %s", e);
+            resp.sendError(500, "Sorry, something went wrong...(((");
+        }
     }
 }

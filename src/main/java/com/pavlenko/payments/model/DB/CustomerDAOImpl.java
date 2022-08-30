@@ -66,6 +66,7 @@ public class CustomerDAOImpl implements CustomerDAO {
                 LOG.info("user logged");
                 return new User(role, id);
             }
+            LOG.warn("user not found");
             return null;
         } catch (SQLException e) {
             LOG.error("sql exception: %s", e);
@@ -216,7 +217,10 @@ public class CustomerDAOImpl implements CustomerDAO {
     public boolean makePayment(int accountId, int paymentId) {
         String query = "update accounts set balance_amount = balance_amount - " +
                 "(select price from payments where id = ? limit 1)  where id = ?;";
-        try (Connection con = ConnectionPool.getConnection()) {
+        Connection con = null;
+        try {
+            con = ConnectionPool.getConnection();
+            con.setAutoCommit(false);
             PreparedStatement preparedStatement = con.prepareStatement(query);
             preparedStatement.setInt(1, paymentId);
             preparedStatement.setInt(2, accountId);
@@ -224,11 +228,21 @@ public class CustomerDAOImpl implements CustomerDAO {
             preparedStatement = con.prepareStatement("update payments set payment_status = 0 where id = ?;");
             preparedStatement.setInt(1, paymentId);
             preparedStatement.executeUpdate();
+            con.commit();
             LOG.info("payment made");
             return true;
         } catch (SQLException e) {
             LOG.error("sql exception: %s", e);
             throw new RuntimeException("Sql exc", e);
+        } finally {
+            try {
+                if (con != null) {
+                    con.setAutoCommit(true);
+                    con.close();
+                }
+            } catch (SQLException e) {
+                LOG.error("sql exception: %s", e);
+            }
         }
     }
 

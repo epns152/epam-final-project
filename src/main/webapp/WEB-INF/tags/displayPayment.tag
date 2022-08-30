@@ -6,6 +6,13 @@
         rtexprvalue="true"
 %>
 
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
+<fmt:setLocale value="${sessionScope.lang}"/>
+<fmt:setBundle basename="messages"/>
+
     <tr>
         <td>
             ${payment.getId()}
@@ -17,7 +24,14 @@
             ${payment.getPrice()}
         </td>
         <td>
-            ${payment.getPaymentStatus() == 0 ? "sent" : "prepared"}
+            <c:choose>
+                <c:when test="${payment.getPaymentStatus() == 0}">
+                    <fmt:message key="status.sent"/>
+                </c:when>
+                <c:otherwise>
+                    <fmt:message key="status.prepared"/>
+                </c:otherwise>
+            </c:choose>
         </td>
         <td>
             ${payment.getDate()}

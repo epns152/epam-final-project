@@ -34,6 +34,7 @@ public class Login extends HttpServlet {
         } else {
             LOG.error("not found user in DB");
             resp.sendError(404, "Wrong Username or Password"); // CRINGE
+            LOG.info("redirected to errorPage");
         }
     }
 }

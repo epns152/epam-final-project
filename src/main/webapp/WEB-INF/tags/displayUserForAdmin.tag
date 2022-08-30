@@ -6,12 +6,17 @@
         rtexprvalue="true"
 %>
 
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
+<fmt:setLocale value="${sessionScope.lang}"/>
+<fmt:setBundle basename="messages"/>
+
 <tr>
     <td>
         ${user.getId()}
     </td>
     <td>
-        ${user.getRole()}
+        <fmt:message key="role.customer"/>
     </td>
     <td>
         ${user.getFirstname()}
@@ -20,7 +25,7 @@
         ${user.getLastname()}
     </td>
     <td>
-        ${user.getStatus()}
+        <fmt:message key="status.${user.getStatus()}"/>
     </td>
     <td>
         ${user.getDate()}

@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 @WebServlet(name = "AccountsToUnblock", value = "/accounts-to-unblock")
@@ -23,14 +24,15 @@ public class AccountsToUnblock extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        if (req.getSession().getAttribute("logged") != null && (boolean) req.getSession().getAttribute("logged")) {
-            AdminDAO adminDAO = new AdminDAOImpl();
+        AdminDAO adminDAO = new AdminDAOImpl();
+        try {
             ArrayList<Account> accounts = adminDAO.getAllBlockedAccountsWithRequestToUnblock();
             LOG.info("made sql statement");
             req.getSession().setAttribute("accounts", accounts);
             req.getRequestDispatcher("/adminInfo.jsp").forward(req, resp);
-        } else {
-            resp.sendError(404, "not logged");
+        } catch (RuntimeException e) {
+            LOG.error("Exception caught %s", e);
+            resp.sendError(500, "Sorry, something went wrong...(((");
         }
     }
 }

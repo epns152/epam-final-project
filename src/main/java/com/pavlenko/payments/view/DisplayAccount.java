@@ -63,8 +63,8 @@ public class DisplayAccount extends TagSupport {
             out.print(String.format("<td>%s</td>", index));
             out.print(String.format("<td>%s</td>", balance));
             out.print(String.format("<td>%s</td>", name));
-            out.print(String.format("<td>%s</td>", status));
-            out.print(String.format("<td>%s</td>", unblockreq.equals("0") ? "not requested" : "requested"));
+            out.print(String.format("<td><fmt:message key=\"status.%s\"/></td>", status));
+            out.print(String.format("<td>%s</td>", unblockreq.equals("0") ? "<fmt:message key=\"request.toUnblockFalse\"/>" : "<fmt:message key=\"request.toUnblockTrue\"/>"));
         } catch (IOException e) {
             throw new JspException(e);
         }

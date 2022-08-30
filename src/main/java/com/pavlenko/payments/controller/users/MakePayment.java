@@ -19,14 +19,17 @@ public class MakePayment extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        if (req.getSession().getAttribute("logged") != null && (boolean) req.getSession().getAttribute("logged")) {
-            int accountId = Integer.parseInt(req.getParameter("accountId"));
-            int paymentId = Integer.parseInt(req.getParameter("paymentId"));
-            CustomerDAO customerDAO = new CustomerDAOImpl();
+        int accountId = Integer.parseInt(req.getParameter("accountId"));
+        int paymentId = Integer.parseInt(req.getParameter("paymentId"));
+        CustomerDAO customerDAO = new CustomerDAOImpl();
+        try {
             customerDAO.makePayment(accountId, paymentId);
             LOG.info("made sql statement");
             resp.sendRedirect("/payments");
             LOG.info("redirected to /payments");
-        } else resp.sendError(404, "not logged");
+        } catch (RuntimeException e) {
+            LOG.error("Exception caught %s", e);
+            resp.sendError(500, "Sorry, something went wrong...(((");
+        }
     }
 }
