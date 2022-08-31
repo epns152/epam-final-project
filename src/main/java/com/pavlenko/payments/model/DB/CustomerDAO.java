@@ -1,5 +1,6 @@
 package com.pavlenko.payments.model.DB;
 
+import com.mysql.cj.jdbc.exceptions.MysqlDataTruncation;
 import com.pavlenko.payments.model.entity.Account;
 import com.pavlenko.payments.model.entity.User;
 import com.pavlenko.payments.model.entity.Payment;

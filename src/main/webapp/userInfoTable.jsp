@@ -38,17 +38,24 @@
                                 balance="${account.getBalance()}"
                                 status="${account.getStatus()}"
                                 unblockreq="${account.getIsRequestedToUnblock()}"/>
-                <td>
-                <c:if test="${paymentId!=null && account.getStatus()=='unblocked'}">
-                    <a href="/make-payment?paymentId=${paymentId}&accountId=${account.getId()}"><fmt:message key="table.makePayment"/></a>
-                </c:if>
-                <c:if test="${account.getStatus()=='unblocked' && paymentId==null}">
-                    <a href="/block-account?accountId=${account.getId()}"><fmt:message key="execute.blockAccount"/></a>
-                </c:if>
-                <c:if test="${account.getIsRequestedToUnblock() == 0 && account.getStatus()=='blocked'}">
-                    <a href="/request-to-unblock?accountId=${account.getId()}"><fmt:message key="execute.requestToUnblockAccount"/></a>
-                </c:if>
-                </td>
+                    <td>
+                        <c:if test="${paymentId!=null && account.getStatus()=='unblocked'}">
+                            <c:choose>
+                                <c:when test="${paymentPrice < account.getBalance()}">
+                                    <a href="/make-payment?paymentId=${paymentId}&accountId=${account.getId()}"><fmt:message key="table.makePayment"/></a>
+                                </c:when>
+                                <c:otherwise>
+                                    <p><fmt:message key="message.notEnough"/></p>
+                                </c:otherwise>
+                            </c:choose>
+                        </c:if>
+                    <c:if test="${account.getStatus()=='unblocked' && paymentId==null}">
+                        <a href="/block-account?accountId=${account.getId()}"><fmt:message key="execute.blockAccount"/></a>
+                    </c:if>
+                    <c:if test="${account.getIsRequestedToUnblock() == 0 && account.getStatus()=='blocked'}">
+                        <a href="/request-to-unblock?accountId=${account.getId()}"><fmt:message key="execute.requestToUnblockAccount"/></a>
+                    </c:if>
+                    </td>
                 </tr>
             </div>
         </c:forEach>
@@ -81,7 +88,7 @@
                 <f:displayPayment payment="${payment}"/>
                 <td>
                     <c:if test="${payment.getPaymentStatus()==1}">
-                        <a href="/accounts?paymentId=${payment.getId()}"><fmt:message key="table.makePayment"/></a>
+                        <a href="/accounts?paymentId=${payment.getId()}&paymentPrice=${payment.getPrice()}"><fmt:message key="table.makePayment"/></a>
                     </c:if>
                 </td>
                 </tr>

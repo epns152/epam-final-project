@@ -1,11 +1,9 @@
 package com.pavlenko.payments.controller;
 
 import com.pavlenko.payments.model.DB.CustomerDAO;
-import com.pavlenko.payments.model.DB.CustomerDAOImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -18,12 +16,12 @@ public class Register extends HttpServlet {
     private static final Logger LOG = LoggerFactory.getLogger(Register.class);
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String firstname = req.getParameter("firstname");
         String lastname = req.getParameter("lastname");
         String login = req.getParameter("login");
         String password = req.getParameter("password");
-        CustomerDAO customerDAO = new CustomerDAOImpl();
+        CustomerDAO customerDAO = (CustomerDAO) req.getAttribute("customerDAO");
         if (!customerDAO.accountExist(login, password)) {
             customerDAO.register(login, password, firstname, lastname);
             LOG.info("made sql statement (register)");

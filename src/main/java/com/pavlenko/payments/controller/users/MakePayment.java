@@ -1,7 +1,6 @@
 package com.pavlenko.payments.controller.users;
 
 import com.pavlenko.payments.model.DB.CustomerDAO;
-import com.pavlenko.payments.model.DB.CustomerDAOImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,14 +20,14 @@ public class MakePayment extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         int accountId = Integer.parseInt(req.getParameter("accountId"));
         int paymentId = Integer.parseInt(req.getParameter("paymentId"));
-        CustomerDAO customerDAO = new CustomerDAOImpl();
+        CustomerDAO customerDAO = (CustomerDAO) req.getAttribute("customerDAO");
         try {
             customerDAO.makePayment(accountId, paymentId);
             LOG.info("made sql statement");
             resp.sendRedirect("/payments");
             LOG.info("redirected to /payments");
         } catch (RuntimeException e) {
-            LOG.error("Exception caught %s", e);
+            LOG.error("Exception caught", e);
             resp.sendError(500, "Sorry, something went wrong...(((");
         }
     }

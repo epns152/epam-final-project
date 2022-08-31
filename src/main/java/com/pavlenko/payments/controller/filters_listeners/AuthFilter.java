@@ -1,4 +1,4 @@
-package com.pavlenko.payments.controller.filters;
+package com.pavlenko.payments.controller.filters_listeners;
 
 import com.pavlenko.payments.model.entity.User;
 import org.slf4j.Logger;

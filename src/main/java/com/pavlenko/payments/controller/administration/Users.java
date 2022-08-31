@@ -1,10 +1,6 @@
 package com.pavlenko.payments.controller.administration;
 
 import com.pavlenko.payments.model.DB.AdminDAO;
-import com.pavlenko.payments.model.DB.AdminDAOImpl;
-import com.pavlenko.payments.model.DB.CustomerDAO;
-import com.pavlenko.payments.model.DB.CustomerDAOImpl;
-import com.pavlenko.payments.model.entity.Account;
 import com.pavlenko.payments.model.entity.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +21,7 @@ public class Users extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.getSession().setAttribute("userId", null);
-        AdminDAO adminDAO = new AdminDAOImpl();
+        AdminDAO adminDAO = (AdminDAO) req.getAttribute("adminDAO");
         try {
             ArrayList<User> users = adminDAO.getAllUsers();
             LOG.info("made sql statement");

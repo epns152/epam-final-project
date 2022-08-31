@@ -1,8 +1,6 @@
 package com.pavlenko.payments.controller.users;
 
 import com.pavlenko.payments.model.DB.CustomerDAO;
-import com.pavlenko.payments.model.DB.CustomerDAOImpl;
-import com.pavlenko.payments.model.entity.Account;
 import com.pavlenko.payments.model.entity.Payment;
 import com.pavlenko.payments.model.entity.User;
 import com.pavlenko.payments.model.services.CustomerService;
@@ -25,7 +23,7 @@ public class MyPayments extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         User user = (User) req.getSession().getAttribute("user");
-        CustomerDAO customerDAO = new CustomerDAOImpl();
+        CustomerDAO customerDAO = (CustomerDAO) req.getAttribute("customerDAO");
         CustomerService service = new CustomerService(customerDAO);
         String sortingCriterion = req.getParameter("sorted-by");
         if (sortingCriterion == null) {

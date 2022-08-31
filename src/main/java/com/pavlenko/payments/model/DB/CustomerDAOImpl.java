@@ -1,6 +1,5 @@
 package com.pavlenko.payments.model.DB;
 
-import com.pavlenko.payments.model.Main;
 import com.pavlenko.payments.model.entity.*;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
@@ -12,6 +11,8 @@ import java.util.ArrayList;
 public class CustomerDAOImpl implements CustomerDAO {
 
     private static final Logger LOG = LoggerFactory.getLogger(CustomerDAOImpl.class);
+
+
     @Override
     public User getAllInfo(User user) {
         String query = "SELECT firstname, lastname, registration_date, user_status FROM users WHERE id = ? and user_role = ?;";
@@ -231,6 +232,9 @@ public class CustomerDAOImpl implements CustomerDAO {
             con.commit();
             LOG.info("payment made");
             return true;
+//        } catch (MysqlDataTruncation e) {
+//            LOG.error("not enough money on the account %s", e);
+//            throw e;
         } catch (SQLException e) {
             LOG.error("sql exception: %s", e);
             throw new RuntimeException("Sql exc", e);

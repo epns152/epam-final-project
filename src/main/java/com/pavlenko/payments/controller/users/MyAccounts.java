@@ -1,7 +1,6 @@
 package com.pavlenko.payments.controller.users;
 
 import com.pavlenko.payments.model.DB.CustomerDAO;
-import com.pavlenko.payments.model.DB.CustomerDAOImpl;
 import com.pavlenko.payments.model.entity.Account;
 import com.pavlenko.payments.model.entity.User;
 import com.pavlenko.payments.model.services.CustomerService;
@@ -24,7 +23,7 @@ public class MyAccounts extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         User user = (User) req.getSession().getAttribute("user");
-        CustomerDAO customerDAO = new CustomerDAOImpl();
+        CustomerDAO customerDAO = (CustomerDAO) req.getAttribute("customerDAO");
         CustomerService service = new CustomerService(customerDAO);
         String sortingCriterion = req.getParameter("sorted-by");
         if (sortingCriterion == null) {
@@ -35,6 +34,7 @@ public class MyAccounts extends HttpServlet {
             LOG.info("service call");
             req.getSession().setAttribute("accounts", accounts);
             req.getSession().setAttribute("paymentId", req.getParameter("paymentId"));
+            req.getSession().setAttribute("paymentPrice", req.getParameter("paymentPrice"));
             req.getRequestDispatcher("/userInfo.jsp").forward(req, resp);
             LOG.info("forwarded to /userInfo.jsp");
         } catch (RuntimeException e) {

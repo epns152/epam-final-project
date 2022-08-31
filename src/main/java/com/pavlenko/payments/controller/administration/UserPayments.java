@@ -1,11 +1,7 @@
 package com.pavlenko.payments.controller.administration;
 
 import com.pavlenko.payments.model.DB.AdminDAO;
-import com.pavlenko.payments.model.DB.AdminDAOImpl;
-import com.pavlenko.payments.model.DB.CustomerDAOImpl;
-import com.pavlenko.payments.model.entity.Account;
 import com.pavlenko.payments.model.entity.Payment;
-import com.pavlenko.payments.model.entity.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +20,7 @@ public class UserPayments extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        AdminDAO adminDAO = new AdminDAOImpl();
+        AdminDAO adminDAO = (AdminDAO) req.getAttribute("adminDAO");
         try {
             ArrayList<Payment> payments = adminDAO.getAllUserPayments(Integer.parseInt(req.getParameter("userId")));
             LOG.info("made sql statement");
@@ -32,7 +28,7 @@ public class UserPayments extends HttpServlet {
             req.getRequestDispatcher("/adminInfo.jsp").forward(req, resp);
             LOG.info("redirected to /adminInfo.jsp");
         } catch (RuntimeException e) {
-            LOG.error("Exception caught %s", e);
+            LOG.error("Exception caught", e);
             resp.sendError(500, "Sorry, something went wrong...(((");
         }
     }

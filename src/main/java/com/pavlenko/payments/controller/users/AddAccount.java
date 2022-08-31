@@ -1,8 +1,6 @@
 package com.pavlenko.payments.controller.users;
 
-import com.pavlenko.payments.controller.filters.UserFilter;
 import com.pavlenko.payments.model.DB.CustomerDAO;
-import com.pavlenko.payments.model.DB.CustomerDAOImpl;
 import com.pavlenko.payments.model.entity.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +21,7 @@ public class AddAccount extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         User user = (User) req.getSession().getAttribute("user");
         int userId = user.getId();
-        CustomerDAO customerDAO = new CustomerDAOImpl();
+        CustomerDAO customerDAO = (CustomerDAO) req.getAttribute("customerDAO");
         try {
             customerDAO.addAccount(userId, req.getParameter("name"), Double.parseDouble(req.getParameter("balance")));
             LOG.info("made sql statement");

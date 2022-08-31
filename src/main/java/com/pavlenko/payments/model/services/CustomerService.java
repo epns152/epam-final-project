@@ -1,7 +1,6 @@
 package com.pavlenko.payments.model.services;
 
 import com.pavlenko.payments.model.DB.CustomerDAO;
-import com.pavlenko.payments.model.DB.CustomerDAOImpl;
 import com.pavlenko.payments.model.entity.Account;
 import com.pavlenko.payments.model.entity.Payment;
 import com.pavlenko.payments.model.entity.User;
@@ -9,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 
 public class CustomerService {
 

@@ -11,13 +11,16 @@ import javax.servlet.http.HttpSession;
 
 import java.io.IOException;
 
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
 
-class RequestToUnblockTest {
+class AddAccountTest {
 
     @Test
-    void doGetTest() throws ServletException, IOException {
-        RequestToUnblock servlet = new RequestToUnblock();
+    void doPostTest() throws ServletException, IOException {
+        AddAccount servlet = new AddAccount();
 
         HttpServletRequest req = mock(HttpServletRequest.class);
         HttpServletResponse resp = mock(HttpServletResponse.class);
@@ -27,19 +30,23 @@ class RequestToUnblockTest {
 
         when(req.getSession()).thenReturn(session);
         when(req.getAttribute("customerDAO")).thenReturn(dao);
-        when(session.getAttribute("user")).thenReturn(user);
-        when(req.getParameter("accountId")).thenReturn("2");
-        when(dao.requestToUnblockAccount(1, 2)).thenReturn(true);
 
-        servlet.doGet(req, resp);
+        when(session.getAttribute("user")).thenReturn(user);
+
+        when(dao.addAccount(anyInt(), anyString(), anyInt())).thenReturn(true);
+        when(req.getParameter(anyString())).thenReturn("0");
+
+        servlet.doPost(req, resp);
 
         verify(req, times(1)).getSession();
-        verify(dao, times(1)).requestToUnblockAccount(user.getId(), Integer.parseInt(req.getParameter("accountId")));
+        verify(req, times(1)).getAttribute("customerDAO");
+        verify(req, times(2)).getParameter(anyString());
+        verify(resp, times(1)).sendRedirect(anyString());
     }
 
     @Test
-    void doGetTestFail() throws ServletException, IOException {
-        RequestToUnblock servlet = new RequestToUnblock();
+    void doPostTestFail() throws ServletException, IOException {
+        AddAccount servlet = new AddAccount();
 
         HttpServletRequest req = mock(HttpServletRequest.class);
         HttpServletResponse resp = mock(HttpServletResponse.class);
@@ -49,13 +56,19 @@ class RequestToUnblockTest {
 
         when(req.getSession()).thenReturn(session);
         when(req.getAttribute("customerDAO")).thenReturn(dao);
-        when(session.getAttribute("user")).thenReturn(user);
-        when(req.getParameter("accountId")).thenReturn("2");
-        when(dao.requestToUnblockAccount(0, 2)).thenThrow(RuntimeException.class);
 
-        servlet.doGet(req, resp);
+        when(session.getAttribute("user")).thenReturn(user);
+
+        when(dao.addAccount(anyInt(), anyString(), anyDouble())).thenThrow(RuntimeException.class);
+
+
+        when(req.getParameter(anyString())).thenReturn("0");
+
+        servlet.doPost(req, resp);
 
         verify(req, times(1)).getSession();
-        verify(dao, times(1)).requestToUnblockAccount(user.getId(), Integer.parseInt(req.getParameter("accountId")));
+        verify(req, times(1)).getAttribute("customerDAO");
+        verify(req, times(2)).getParameter(anyString());
+        verify(resp, times(1)).sendError(500, "Sorry, something went wrong...(((");
     }
 }

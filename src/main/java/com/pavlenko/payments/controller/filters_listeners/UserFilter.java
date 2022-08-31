@@ -1,4 +1,4 @@
-package com.pavlenko.payments.controller.filters;
+package com.pavlenko.payments.controller.filters_listeners;
 
 import com.pavlenko.payments.model.entity.User;
 import org.slf4j.Logger;
@@ -11,10 +11,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-@WebFilter(urlPatterns = "/*")
-public class LangFilter implements Filter {
+@WebFilter(urlPatterns = {"/add-account", "/add-payment",
+        "/block-account", "/make-payment", "/accounts", "/payments", "/request-to-unblock"})
+public class UserFilter implements Filter {
 
-    private static final Logger LOG = LoggerFactory.getLogger(LangFilter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(UserFilter.class);
 
     @Override
     public void doFilter(ServletRequest req,
@@ -22,10 +23,12 @@ public class LangFilter implements Filter {
                          FilterChain filterChain)
             throws IOException, ServletException {
         HttpSession session = ((HttpServletRequest) req).getSession();
-        if (session.getAttribute("lang") == null) {
-            session.setAttribute("lang", "en");
+        User user = (User) session.getAttribute("user");
+        LOG.info("user filter executed");
+        if (user != null && !user.getRole().equals("customer")) {
+            ((HttpServletResponse) resp).sendRedirect("index.jsp");
+        } else {
+            filterChain.doFilter(req, resp);
         }
-        LOG.info("lang filter executed");
-        filterChain.doFilter(req, resp);
     }
 }
