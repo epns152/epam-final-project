@@ -6,27 +6,31 @@
 <fmt:setLocale value="${sessionScope.lang}"/>
 <fmt:setBundle basename="messages"/>
 
-<p>${sessionScope.lang}</p>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<link href="css/style1.css" rel="stylesheet">
-<div class="header">
+<%--<link href="css/style1.css" rel="stylesheet">--%>
+<div class="container">
     <a href="/" class="logo">Payments</a>
+<%--    <div class="container">--%>
     <c:choose>
-        <c:when test="${logged==false}">
-            <div class="header-right">
-                <a class="active" href="/"><fmt:message key="label.home" /></a>
-                <a onclick="showForm('signIn')">Sign In</a>
-                <a onclick="showForm('register')">Register</a>
-            </div>
-        </c:when>
+<%--        <c:when test="${logged==false}">--%>
+<%--            <div class="header-right">--%>
+<%--                <a class="active" href="/"><fmt:message key="label.home" /></a>--%>
+<%--                <a onclick="showForm('signIn')">Sign In</a>--%>
+<%--                <a onclick="showForm('register')">Register</a>--%>
+<%--                <a href="/lang?lang=en&current=${requestScope['javax.servlet.forward.request_uri']}">EN</a>--%>
+<%--                <a href="/lang?lang=ua&current=${requestScope['javax.servlet.forward.request_uri']}">UA</a>--%>
+<%--            </div>--%>
+<%--        </c:when>--%>
         <c:when test="${user.getRole()=='admin'}">
             <div>
                 <a href="/users"><fmt:message key="label.users"/></a>
                 <a href="/accounts-to-unblock"><fmt:message key="label.accountsToUnblock"/></a>
                 <a href="/sign-out"><fmt:message key="label.signOut"/></a>
+                <a href="/lang?lang=en&current=${requestScope['javax.servlet.forward.request_uri']}">EN</a>
+                <a href="/lang?lang=ua&current=${requestScope['javax.servlet.forward.request_uri']}">UA</a>
             </div>
         </c:when>
-        <c:otherwise>
+        <c:when test="${user.getRole()=='customer'}">
             <div class="header-right">
                 <a href="/index.jsp"><fmt:message key="label.home"/></a>
                 <a href="/accounts?sorted-by=id"><fmt:message key="label.myAccounts"/></a>
@@ -36,6 +40,7 @@
                 <a href="/lang?lang=en&current=${requestScope['javax.servlet.forward.request_uri']}">EN</a>
                 <a href="/lang?lang=ua&current=${requestScope['javax.servlet.forward.request_uri']}">UA</a>
             </div>
-        </c:otherwise>
+        </c:when>
     </c:choose>
+<%--    </div>--%>
 </div>

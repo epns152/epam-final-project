@@ -34,7 +34,7 @@ public class BlockAccount extends HttpServlet {
                 LOG.info("forward to /user-accounts?userId=");
             }
         } catch (RuntimeException e) {
-            LOG.error("Exception caught %s", e);
+            LOG.error("Exception caught", e);
             resp.sendError(500, "Sorry, something went wrong...(((");
         }
     }

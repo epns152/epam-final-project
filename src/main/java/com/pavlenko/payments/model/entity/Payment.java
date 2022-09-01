@@ -1,9 +1,10 @@
 package com.pavlenko.payments.model.entity;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
 
-public class Payment {
+public class Payment implements Serializable {
     private int id;
     private double price;
     private String name;

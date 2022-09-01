@@ -20,16 +20,31 @@ public class UserAccounts extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        int page = 1;
+        int recordsPerPage = 5;
+        if (req.getParameter("page") != null) {
+            page = Integer.parseInt(req.getParameter("page"));
+        }
+
+        int userId;
+        if (req.getParameter("userId") != null) {
+            req.getSession().setAttribute("userId", Integer.valueOf(req.getParameter("userId")));
+        }
+        userId = (int) req.getSession().getAttribute("userId");
+
         AdminDAO adminDAO = (AdminDAO) req.getAttribute("adminDAO");
         try {
-            ArrayList<Account> accounts = adminDAO.getAllUserAccounts(Integer.parseInt(req.getParameter("userId")));
+            ArrayList<Account> accounts = adminDAO.getAllUserAccounts(userId, (page - 1) * recordsPerPage, recordsPerPage);
             LOG.info("made sql statement");
+            int noOfRecords = adminDAO.getNoOfRecordsAccounts();
+            int noOfPages = (int) Math.ceil(noOfRecords * 1.0 / recordsPerPage);
+            req.setAttribute("noOfPages", noOfPages);
+            req.setAttribute("currentPage", page);
             req.getSession().setAttribute("accounts", accounts);
-            req.getSession().setAttribute("userId", Integer.parseInt(req.getParameter("userId")));
             req.getRequestDispatcher("/adminInfo.jsp").forward(req, resp);
             LOG.info("redirected to /adminInfo.jsp");
         } catch (RuntimeException e) {
-            LOG.error("Exception caught %s", e);
+            LOG.error("Exception caught", e);
             resp.sendError(500, "Sorry, something went wrong...(((");
         }
     }

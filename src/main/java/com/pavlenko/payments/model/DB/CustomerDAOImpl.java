@@ -11,6 +11,8 @@ import java.util.ArrayList;
 public class CustomerDAOImpl implements CustomerDAO {
 
     private static final Logger LOG = LoggerFactory.getLogger(CustomerDAOImpl.class);
+    private int noOfRecordsAccounts;
+    private int noOfRecordsPayments;
 
 
     @Override
@@ -31,7 +33,7 @@ public class CustomerDAOImpl implements CustomerDAO {
             }
             return null;
         } catch (SQLException e) {
-            LOG.error("sql exception: %s", e);
+            LOG.error("sql exception", e);
             throw new RuntimeException("Sql exc", e);
         }
     }
@@ -48,14 +50,14 @@ public class CustomerDAOImpl implements CustomerDAO {
             LOG.info("user exist");
             return resultSet.getInt(1) > 0;
         } catch (SQLException e) {
-            LOG.error("sql exception: %s", e);
+            LOG.error("sql exception", e);
             throw new RuntimeException("Sql exc", e);
         }
     }
 
     @Override
     public User login(String login, String pass) {
-        String query = "SELECT id, user_role FROM users WHERE login = ? and password = ?;";
+        String query = "SELECT id, user_role, user_status FROM users WHERE login = ? and password = ?;";
         try (Connection con = ConnectionPool.getConnection()) {
             PreparedStatement preparedStatement = con.prepareStatement(query);
             preparedStatement.setString(1, login);
@@ -64,13 +66,18 @@ public class CustomerDAOImpl implements CustomerDAO {
             if (resultSet.next()) {
                 int id = resultSet.getInt(1);
                 String role = resultSet.getString(2);
+                String status = resultSet.getString(3);
+                if (status.equals("blocked")) {
+                    LOG.warn("user is blocked");
+                    return new User("none", -1);
+                }
                 LOG.info("user logged");
                 return new User(role, id);
             }
             LOG.warn("user not found");
             return null;
         } catch (SQLException e) {
-            LOG.error("sql exception: %s", e);
+            LOG.error("sql exception", e);
             throw new RuntimeException("Sql exc", e);
         }
     }
@@ -88,7 +95,7 @@ public class CustomerDAOImpl implements CustomerDAO {
             LOG.info("user registered");
             return true;
         } catch (SQLException e) {
-            LOG.error("sql exception: %s", e);
+            LOG.error("sql exception", e);
             throw new RuntimeException("Sql exc", e);
         }
     }
@@ -105,7 +112,7 @@ public class CustomerDAOImpl implements CustomerDAO {
             LOG.info("account added");
             return true;
         } catch (SQLException e) {
-            LOG.error("sql exception: %s", e);
+            LOG.error("sql exception", e);
             throw new RuntimeException("Sql exc", e);
         }
     }
@@ -122,7 +129,7 @@ public class CustomerDAOImpl implements CustomerDAO {
             LOG.info("account blocked by user");
             return true;
         } catch (SQLException e) {
-            LOG.error("sql exception: %s", e);
+            LOG.error("sql exception", e);
             throw new RuntimeException("Sql exc", e);
         }
     }
@@ -139,7 +146,7 @@ public class CustomerDAOImpl implements CustomerDAO {
             LOG.info("request to unblock account by user");
             return true;
         } catch (SQLException e) {
-            LOG.error("sql exception: %s", e);
+            LOG.error("sql exception", e);
             throw new RuntimeException("Sql exc", e);
         }
     }
@@ -156,16 +163,16 @@ public class CustomerDAOImpl implements CustomerDAO {
             LOG.info("payment added");
             return true;
         } catch (SQLException e) {
-            LOG.error("sql exception: %s", e);
+            LOG.error("sql exception", e);
             throw new RuntimeException("Sql exc", e);
         }
     }
 
     @Override
-    public ArrayList<Account> getAccounts(User user, String sortBy) {
+    public ArrayList<Account> getAccounts(User user, String sortBy, int offset, int noOfRecords) {
         ArrayList<Account> accounts = new ArrayList<>();
-        String query = "SELECT id, account_name, balance_amount, unblock_request, account_status" +
-                " FROM accounts WHERE Users_id = ? ORDER BY " + sortBy + ";";
+        String query = "SELECT SQL_CALC_FOUND_ROWS id, account_name, balance_amount, unblock_request, account_status" +
+                " FROM accounts WHERE Users_id = ? ORDER BY " + sortBy + " limit " + offset + ", " + noOfRecords + ";";
         try (Connection con = ConnectionPool.getConnection()) {
             PreparedStatement preparedStatement = con.prepareStatement(query);
             preparedStatement.setInt(1, user.getId());
@@ -179,19 +186,24 @@ public class CustomerDAOImpl implements CustomerDAO {
                 String accountStatus = resultSet.getString(5);
                 accounts.add(new Account(id, balanceAmount, accountName, accountStatus, unblockRequest));
             }
+            resultSet.close();
+            resultSet = preparedStatement.executeQuery("SELECT FOUND_ROWS()");
+            if (resultSet.next()) {
+                this.noOfRecordsAccounts = resultSet.getInt(1);
+            }
             LOG.info("got user accounts");
             return accounts;
         } catch (SQLException e) {
-            LOG.error("sql exception: %s", e);
+            LOG.error("sql exception", e);
             throw new RuntimeException("Sql exc", e);
         }
     }
 
     @Override
-    public ArrayList<Payment> getPayments(User user, String sortBy) {
+    public ArrayList<Payment> getPayments(User user, String sortBy, int offset, int noOfRecords) {
         ArrayList<Payment> payments = new ArrayList<>();
-        String query = "SELECT id, price, payment_name, creation_date, payment_status, account_id" +
-                " FROM payments WHERE users_id = ? ORDER BY " + sortBy + ";";
+        String query = "SELECT SQL_CALC_FOUND_ROWS id, price, payment_name, creation_date, payment_status, account_id" +
+                " FROM payments WHERE users_id = ? ORDER BY " + sortBy + " limit " + offset + ", " + noOfRecords + ";";
         try (Connection con = ConnectionPool.getConnection()) {
             PreparedStatement preparedStatement = con.prepareStatement(query);
             preparedStatement.setInt(1, user.getId());
@@ -206,10 +218,15 @@ public class CustomerDAOImpl implements CustomerDAO {
                 int accountId = resultSet.getInt(6);
                 payments.add(new Payment(id, price, paymentName, date, paymentStatus, accountId));
             }
+            resultSet.close();
+            resultSet = preparedStatement.executeQuery("SELECT FOUND_ROWS()");
+            if (resultSet.next()) {
+                this.noOfRecordsPayments = resultSet.getInt(1);
+            }
             LOG.info("got user payments");
             return payments;
         } catch (SQLException e) {
-            LOG.error("sql exception: %s", e);
+            LOG.error("sql exception", e);
             throw new RuntimeException("Sql exc", e);
         }
     }
@@ -232,11 +249,15 @@ public class CustomerDAOImpl implements CustomerDAO {
             con.commit();
             LOG.info("payment made");
             return true;
-//        } catch (MysqlDataTruncation e) {
-//            LOG.error("not enough money on the account %s", e);
-//            throw e;
         } catch (SQLException e) {
-            LOG.error("sql exception: %s", e);
+            LOG.error("sql exception", e);
+            try {
+                if (con != null) {
+                    con.rollback();
+                }
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
             throw new RuntimeException("Sql exc", e);
         } finally {
             try {
@@ -245,7 +266,7 @@ public class CustomerDAOImpl implements CustomerDAO {
                     con.close();
                 }
             } catch (SQLException e) {
-                LOG.error("sql exception: %s", e);
+                LOG.error("sql exception", e);
             }
         }
     }
@@ -253,4 +274,6 @@ public class CustomerDAOImpl implements CustomerDAO {
     public static String md5(String pass) {
         return DigestUtils.md5Hex(pass).toLowerCase();
     }
+    public int getNoOfRecordsAccounts() { return noOfRecordsAccounts; }
+    public int getNoOfRecordsPayments() { return noOfRecordsPayments; }
 }

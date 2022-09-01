@@ -12,7 +12,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 @WebFilter(urlPatterns = {"/accounts-to-unblock", "/a-block-account", "/block-user", "/user-accounts",
-                    "/user-payments", "/users", "/add-account", "/add-payment",
+                    "/user-payments", "/users", "/add-account", "/add-payment", "/discard",
                     "/block-account", "/make-payment", "/accounts", "/payments", "/profile", "/request-to-unblock"})
 public class AuthFilter implements Filter {
 

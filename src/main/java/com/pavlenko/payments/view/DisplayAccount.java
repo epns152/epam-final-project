@@ -71,6 +71,4 @@ public class DisplayAccount extends TagSupport {
 
         return EVAL_BODY_INCLUDE;
     }
-
-
 }

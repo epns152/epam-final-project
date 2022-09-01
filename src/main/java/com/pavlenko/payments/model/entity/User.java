@@ -1,8 +1,9 @@
 package com.pavlenko.payments.model.entity;
 
+import java.io.Serializable;
 import java.sql.Date;
 
-public class User {
+public class User implements Serializable {
     private final String role;
     private String firstname;
     private String lastname;

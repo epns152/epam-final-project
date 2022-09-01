@@ -20,10 +20,26 @@ public class UserPayments extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        int page = 1;
+        int recordsPerPage = 3;
+        if (req.getParameter("page") != null) {
+            page = Integer.parseInt(req.getParameter("page"));
+        }
+
+        int userId;
+        if (req.getParameter("userId") != null) {
+            req.getSession().setAttribute("userId", Integer.valueOf(req.getParameter("userId")));
+        }
+        userId = (int) req.getSession().getAttribute("userId");
+
         AdminDAO adminDAO = (AdminDAO) req.getAttribute("adminDAO");
         try {
-            ArrayList<Payment> payments = adminDAO.getAllUserPayments(Integer.parseInt(req.getParameter("userId")));
+            ArrayList<Payment> payments = adminDAO.getAllUserPayments(userId, (page - 1) * recordsPerPage, recordsPerPage);
             LOG.info("made sql statement");
+            int noOfRecords = adminDAO.getNoOfRecordsPayments();
+            int noOfPages = (int) Math.ceil(noOfRecords * 1.0 / recordsPerPage);
+            req.setAttribute("noOfPages", noOfPages);
+            req.setAttribute("currentPage", page);
             req.getSession().setAttribute("payments", payments);
             req.getRequestDispatcher("/adminInfo.jsp").forward(req, resp);
             LOG.info("redirected to /adminInfo.jsp");

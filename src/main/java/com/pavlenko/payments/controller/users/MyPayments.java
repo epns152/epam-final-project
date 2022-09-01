@@ -22,6 +22,12 @@ public class MyPayments extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        int page = 1;
+        int recordsPerPage = 5;
+        if (req.getParameter("page") != null) {
+            page = Integer.parseInt(req.getParameter("page"));
+        }
+
         User user = (User) req.getSession().getAttribute("user");
         CustomerDAO customerDAO = (CustomerDAO) req.getAttribute("customerDAO");
         CustomerService service = new CustomerService(customerDAO);
@@ -30,13 +36,17 @@ public class MyPayments extends HttpServlet {
             sortingCriterion = "id";
         }
         try {
-            ArrayList<Payment> payments = service.getPaymentsSortedBy(user, sortingCriterion);
+            ArrayList<Payment> payments = service.getPaymentsSortedBy(user, sortingCriterion, (page - 1) * recordsPerPage, recordsPerPage);
             LOG.info("service call");
+            int noOfRecords = customerDAO.getNoOfRecordsPayments();
+            int noOfPages = (int) Math.ceil(noOfRecords * 1.0 / recordsPerPage);
+            req.setAttribute("noOfPages", noOfPages);
+            req.setAttribute("currentPage", page);
             req.getSession().setAttribute("payments", payments);
             req.getRequestDispatcher("/userInfo.jsp").forward(req, resp);
             LOG.info("forwarded to /userInfo.jsp");
         } catch (RuntimeException e) {
-            LOG.error("Exception caught %s", e);
+            LOG.error("Exception caught", e);
             resp.sendError(500, "Sorry, something went wrong...(((");
         }
     }

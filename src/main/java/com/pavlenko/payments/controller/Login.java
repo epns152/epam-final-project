@@ -25,10 +25,15 @@ public class Login extends HttpServlet {
         User user = customerDAO.login(login, password);
         LOG.info("made sql statement");
         if (user != null) {
-            req.getSession().setAttribute("logged", true);
-            req.getSession().setAttribute("user", user);
-            resp.sendRedirect("index.jsp");
-            LOG.info("redirected to index.jsp");
+            if (user.getId() == -1) {
+                LOG.warn("user is blocked");
+                resp.sendError(404, "Your account is blocked");
+            } else {
+                req.getSession().setAttribute("logged", true);
+                req.getSession().setAttribute("user", user);
+                resp.sendRedirect("index.jsp");
+                LOG.info("redirected to index.jsp");
+            }
         } else {
             LOG.error("not found user in DB");
             resp.sendError(404, "Wrong Username or Password");

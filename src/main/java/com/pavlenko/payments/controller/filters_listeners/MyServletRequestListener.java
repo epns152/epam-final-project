@@ -28,7 +28,5 @@ public class MyServletRequestListener implements ServletRequestListener {
         servletRequest.setAttribute("customerDAO", new CustomerDAOImpl());
         servletRequest.setAttribute("adminDAO", new AdminDAOImpl());
         LOG.debug("ServletRequest initialized. Remote IP="+servletRequest.getRemoteAddr());
-
     }
-
 }

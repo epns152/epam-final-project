@@ -24,6 +24,8 @@ public class MakePayment extends HttpServlet {
         try {
             customerDAO.makePayment(accountId, paymentId);
             LOG.info("made sql statement");
+            req.getSession().removeAttribute("paymentId");
+            req.getSession().removeAttribute("paymentPrice");
             resp.sendRedirect("/payments");
             LOG.info("redirected to /payments");
         } catch (RuntimeException e) {

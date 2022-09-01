@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-@WebFilter(urlPatterns = {"/add-account", "/add-payment",
+@WebFilter(urlPatterns = {"/add-account", "/add-payment", "/discard",
         "/block-account", "/make-payment", "/accounts", "/payments", "/request-to-unblock"})
 public class UserFilter implements Filter {
 

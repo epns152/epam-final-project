@@ -4,13 +4,13 @@
 <%@ taglib prefix="f" tagdir="/WEB-INF/tags" %>
 
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ page isELIgnored="false" %>
 
 <fmt:setLocale value="${sessionScope.lang}"/>
 <fmt:setBundle basename="messages"/>
 
 <c:choose>
     <c:when test="${accounts!=null}">
+        <div class="container">
         <p><fmt:message key="label.sortBy"/>
             <a href="/accounts?sorted-by=id">
                 <fmt:message key="button.number"/>
@@ -22,47 +22,74 @@
                 <fmt:message key="button.name"/>
             </a>
         </p>
-        <table border=1>
-            <tr>
-                <td><fmt:message key="table.number"/></td>
-                <td><fmt:message key="table.balance"/></td>
-                <td><fmt:message key="table.name"/></td>
-                <td><fmt:message key="table.status"/></td>
-                <td><fmt:message key="table.request"/></td>
-                <td><fmt:message key="table.requestOrBlock"/></td>
+
+        <table>
+            <tr class="table-header">
+                <td class="header__item"><fmt:message key="table.number"/></td>
+                <td class="header__item"><fmt:message key="table.balance"/></td>
+                <td class="header__item"><fmt:message key="table.name"/></td>
+                <td class="header__item"><fmt:message key="table.status"/></td>
+                <td class="header__item"><fmt:message key="table.request"/></td>
+                <td class="header__item"><fmt:message key="table.requestOrBlock"/></td>
             </tr>
         <c:forEach var="account" items="${accounts}">
-            <div class="container">
-                <my:acc name="${account.getName()}"
-                                index="${account.getId()}"
-                                balance="${account.getBalance()}"
-                                status="${account.getStatus()}"
-                                unblockreq="${account.getIsRequestedToUnblock()}"/>
-                    <td>
-                        <c:if test="${paymentId!=null && account.getStatus()=='unblocked'}">
-                            <c:choose>
-                                <c:when test="${paymentPrice < account.getBalance()}">
-                                    <a href="/make-payment?paymentId=${paymentId}&accountId=${account.getId()}"><fmt:message key="table.makePayment"/></a>
-                                </c:when>
-                                <c:otherwise>
-                                    <p><fmt:message key="message.notEnough"/></p>
-                                </c:otherwise>
-                            </c:choose>
-                        </c:if>
-                    <c:if test="${account.getStatus()=='unblocked' && paymentId==null}">
-                        <a href="/block-account?accountId=${account.getId()}"><fmt:message key="execute.blockAccount"/></a>
+            <my:acc name="${account.getName()}"
+                            index="${account.getId()}"
+                            balance="${account.getBalance()}"
+                            status="${account.getStatus()}"
+                            unblockreq="${account.getIsRequestedToUnblock()}"/>
+                <td>
+                    <c:if test="${paymentId!=null && account.getStatus()=='unblocked'}">
+                        <c:choose>
+                            <c:when test="${sessionScope.paymentPrice < account.getBalance()}">
+                                <a href="/make-payment?paymentId=${sessionScope.paymentId}&accountId=${account.getId()}"><fmt:message key="table.makePayment"/></a>
+                            </c:when>
+                            <c:otherwise>
+                                <p><fmt:message key="message.notEnough"/></p>
+                            </c:otherwise>
+                        </c:choose>
                     </c:if>
-                    <c:if test="${account.getIsRequestedToUnblock() == 0 && account.getStatus()=='blocked'}">
-                        <a href="/request-to-unblock?accountId=${account.getId()}"><fmt:message key="execute.requestToUnblockAccount"/></a>
-                    </c:if>
-                    </td>
-                </tr>
-            </div>
+                <c:if test="${account.getStatus()=='unblocked' && paymentId==null}">
+                    <a href="/block-account?accountId=${account.getId()}"><fmt:message key="execute.blockAccount"/></a>
+                </c:if>
+                <c:if test="${account.getIsRequestedToUnblock() == 0 && account.getStatus()=='blocked'}">
+                    <a href="/request-to-unblock?accountId=${account.getId()}"><fmt:message key="execute.requestToUnblockAccount"/></a>
+                </c:if>
+                </td>
+            </tr>
         </c:forEach>
         </table>
-        ${paymentId=null}
+        </div>
+        <c:if test="${paymentId != null}">
+            <a href="discard"><fmt:message key="execute.discard"/></a>
+        </c:if>
+
+
+        <table class="pagination-table">
+            <tr>
+                <c:if test="${currentPage != 1}">
+                    <td><a href="/accounts?page=${currentPage - 1}"><fmt:message key="message.previous"/></a></td>
+                </c:if>
+                <c:forEach begin="1" end="${noOfPages}" var="i">
+                    <c:choose>
+                        <c:when test="${currentPage eq i}">
+                            <td>${i}</td>
+                        </c:when>
+                        <c:otherwise>
+                            <td><a href="/accounts?page=${i}">${i}</a></td>
+                        </c:otherwise>
+                    </c:choose>
+                </c:forEach>
+                <c:if test="${currentPage lt noOfPages}">
+                    <td><a href="/accounts?page=${currentPage + 1}"><fmt:message key="message.next"/></a></td>
+                </c:if>
+            </tr>
+        </table>
+
     </c:when>
     <c:when test="${payments!=null}">
+        <div class="container">
+
         <p><fmt:message key="label.sortBy"/>
             <a href="/payments?sorted-by=id">
                 <fmt:message key="button.number"/>
@@ -74,26 +101,45 @@
                 <fmt:message key="table.date"/>
             </a>
         </p>
-        <table border=1>
-        <tr>
-            <td><fmt:message key="table.number"/></td>
-            <td><fmt:message key="table.name"/></td>
-            <td><fmt:message key="table.price"/></td>
-            <td><fmt:message key="table.status"/></td>
-            <td><fmt:message key="table.date"/></td>
-            <td>         </td>
+        <table>
+        <tr class="table-header">
+            <td class="header__item"><fmt:message key="table.number"/></td>
+            <td class="header__item"><fmt:message key="table.name"/></td>
+            <td class="header__item"><fmt:message key="table.price"/></td>
+            <td class="header__item"><fmt:message key="table.status"/></td>
+            <td class="header__item"><fmt:message key="table.date"/></td>
+            <td class="header__item"><fmt:message key="table.makePayment"/></td>
         </tr>
         <c:forEach var="payment" items="${payments}" >
-            <div class="container">
-                <f:displayPayment payment="${payment}"/>
-                <td>
-                    <c:if test="${payment.getPaymentStatus()==1}">
-                        <a href="/accounts?paymentId=${payment.getId()}&paymentPrice=${payment.getPrice()}"><fmt:message key="table.makePayment"/></a>
-                    </c:if>
-                </td>
-                </tr>
-            </div>
+            <f:displayPayment payment="${payment}"/>
+            <td>
+                <c:if test="${payment.getPaymentStatus()==1}">
+                    <a href="/accounts?paymentId=${payment.getId()}&paymentPrice=${payment.getPrice()}"><fmt:message key="table.makePayment"/></a>
+                </c:if>
+            </td>
+            </tr>
         </c:forEach>
+        </table>
+        </div>
+        <table class="pagination-table">
+            <tr>
+                <c:if test="${currentPage != 1}">
+                    <td><a href="payments?page=${currentPage - 1}"><fmt:message key="message.previous"/></a></td>
+                </c:if>
+                <c:forEach begin="1" end="${noOfPages}" var="i">
+                    <c:choose>
+                        <c:when test="${currentPage eq i}">
+                            <td>${i}</td>
+                        </c:when>
+                        <c:otherwise>
+                            <td><a href="payments?page=${i}">${i}</a></td>
+                        </c:otherwise>
+                    </c:choose>
+                </c:forEach>
+                <c:if test="${currentPage lt noOfPages}">
+                    <td><a href="payments?page=${currentPage + 1}"><fmt:message key="message.next"/></a></td>
+                </c:if>
+            </tr>
         </table>
     </c:when>
 </c:choose>

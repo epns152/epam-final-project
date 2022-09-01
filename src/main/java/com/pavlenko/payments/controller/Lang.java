@@ -26,6 +26,5 @@ public class Lang extends HttpServlet {
             resp.sendRedirect(req.getParameter("current"));
             LOG.info("Lang servlet redirected to " + req.getParameter("current"));
         }
-//        req.getRequestDispatcher(req.getParameter("current")).forward(req, resp);
     }
 }

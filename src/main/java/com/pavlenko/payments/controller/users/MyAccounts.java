@@ -22,23 +22,39 @@ public class MyAccounts extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        int page = 1;
+        int recordsPerPage = 5;
+        if (req.getParameter("page") != null) {
+            page = Integer.parseInt(req.getParameter("page"));
+        }
         User user = (User) req.getSession().getAttribute("user");
         CustomerDAO customerDAO = (CustomerDAO) req.getAttribute("customerDAO");
+
         CustomerService service = new CustomerService(customerDAO);
+
         String sortingCriterion = req.getParameter("sorted-by");
         if (sortingCriterion == null) {
             sortingCriterion = "id";
         }
         try {
-            ArrayList<Account> accounts = service.getAccountsSortedBy(user, sortingCriterion);
+            ArrayList<Account> accounts = service.getAccountsSortedBy(user, sortingCriterion, (page - 1) * recordsPerPage, recordsPerPage);
             LOG.info("service call");
+            int noOfRecords = customerDAO.getNoOfRecordsAccounts();
+            int noOfPages = (int) Math.ceil(noOfRecords * 1.0 / recordsPerPage);
+            req.setAttribute("noOfPages", noOfPages);
+            req.setAttribute("currentPage", page);
             req.getSession().setAttribute("accounts", accounts);
-            req.getSession().setAttribute("paymentId", req.getParameter("paymentId"));
-            req.getSession().setAttribute("paymentPrice", req.getParameter("paymentPrice"));
+            String paymentId = req.getParameter("paymentId");
+            String paymentPrice = req.getParameter("paymentPrice");
+            if (paymentId != null && paymentPrice != null) {
+                req.getSession().setAttribute("paymentId", paymentId);
+                req.getSession().setAttribute("paymentPrice", paymentPrice);
+                LOG.info("payment info added " + paymentPrice + " " + paymentId);
+            }
             req.getRequestDispatcher("/userInfo.jsp").forward(req, resp);
             LOG.info("forwarded to /userInfo.jsp");
         } catch (RuntimeException e) {
-            LOG.error("Exception caught %s", e);
+            LOG.error("Exception caught", e);
             resp.sendError(500, "Sorry, something went wrong...(((");
         }
     }

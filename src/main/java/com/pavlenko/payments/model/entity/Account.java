@@ -1,8 +1,9 @@
 package com.pavlenko.payments.model.entity;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Account {
+public class Account implements Serializable {
     private int id;
     private double balance;
     private String name;

@@ -30,7 +30,7 @@ public class BlockUser extends HttpServlet {
             resp.sendRedirect("/users");
             LOG.info("redirected to /users");
         } catch (RuntimeException e) {
-            LOG.error("Exception caught %s", e);
+            LOG.error("Exception caught", e);
             resp.sendError(500, "Sorry, something went wrong...(((");
         }
     }

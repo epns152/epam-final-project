@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>User Info</title>
+    <link href="css/styles.css" rel="stylesheet">
 </head>
 <body>
     <jsp:include page="header.jsp"/>
