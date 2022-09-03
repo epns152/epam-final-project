@@ -6,7 +6,7 @@ import java.util.Objects;
 public class Account implements Serializable {
 
     private static final long serialVersionUID = 31L;
-    private int id;
+    private final int id;
     private double balance;
     private String name;
     private String status = "unblocked";

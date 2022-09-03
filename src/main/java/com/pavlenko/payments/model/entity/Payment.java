@@ -8,12 +8,12 @@ public class Payment implements Serializable {
 
     private static final long serialVersionUID = 30L;
 
-    private int id;
-    private double price;
-    private String name;
-    private Date date;
-    private int paymentStatus;
-    private int accountId;
+    private final int id;
+    private final double price;
+    private final String name;
+    private final Date date;
+    private final int paymentStatus;
+    private final int accountId;
 
     public Payment(int id, double price, String name, Date date, int paymentStatus, int accountId) {
         this.id = id;
