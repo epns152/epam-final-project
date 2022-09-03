@@ -25,14 +25,14 @@
         </tr>
         <c:forEach var="user" items="${users}" >
                 <f:displayUserForAdmin user="${user}"/>
-                <td><a href="/user-accounts?userId=${user.getId()}"><fmt:message key="table.userAccounts"/></a></td>
-                <td><a href="/user-payments?userId=${user.getId()}"><fmt:message key="table.userPayments"/></a></td>
+                <td><a href="user-accounts?userId=${user.getId()}"><fmt:message key="table.userAccounts"/></a></td>
+                <td><a href="user-payments?userId=${user.getId()}"><fmt:message key="table.userPayments"/></a></td>
                 <td>
                 <c:if test="${user.getStatus()=='unblocked'}">
-                    <a href="/block-user?userId=${user.getId()}&status=0"><fmt:message key="execute.blockUser"/></a>
+                    <a href="block-user?userId=${user.getId()}&status=0"><fmt:message key="execute.blockUser"/></a>
                 </c:if>
                 <c:if test="${user.getStatus()=='blocked'}">
-                    <a href="/block-user?userId=${user.getId()}&status=1"><fmt:message key="execute.unblockUser"/></a>
+                    <a href="block-user?userId=${user.getId()}&status=1"><fmt:message key="execute.unblockUser"/></a>
                 </c:if>
                 </td>
                 </tr>

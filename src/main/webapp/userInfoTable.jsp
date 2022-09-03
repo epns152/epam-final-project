@@ -12,13 +12,13 @@
     <c:when test="${accounts!=null}">
         <div class="container">
         <p><fmt:message key="label.sortBy"/>
-            <a href="/accounts?sorted-by=id">
+            <a href="accounts?sorted-by=id">
                 <fmt:message key="button.number"/>
             </a>
-            <a href="/accounts?sorted-by=balance">
+            <a href="accounts?sorted-by=balance">
                 <fmt:message key="button.balance"/>
             </a>
-            <a href="/accounts?sorted-by=name">
+            <a href="accounts?sorted-by=name">
                 <fmt:message key="button.name"/>
             </a>
         </p>
@@ -42,7 +42,7 @@
                     <c:if test="${paymentId!=null && account.getStatus()=='unblocked'}">
                         <c:choose>
                             <c:when test="${sessionScope.paymentPrice < account.getBalance()}">
-                                <a href="/make-payment?paymentId=${sessionScope.paymentId}&accountId=${account.getId()}"><fmt:message key="table.makePayment"/></a>
+                                <a href="make-payment?paymentId=${sessionScope.paymentId}&accountId=${account.getId()}"><fmt:message key="table.makePayment"/></a>
                             </c:when>
                             <c:otherwise>
                                 <p><fmt:message key="message.notEnough"/></p>
@@ -50,10 +50,10 @@
                         </c:choose>
                     </c:if>
                 <c:if test="${account.getStatus()=='unblocked' && paymentId==null}">
-                    <a href="/block-account?accountId=${account.getId()}"><fmt:message key="execute.blockAccount"/></a>
+                    <a href="block-account?accountId=${account.getId()}"><fmt:message key="execute.blockAccount"/></a>
                 </c:if>
                 <c:if test="${account.getIsRequestedToUnblock() == 0 && account.getStatus()=='blocked'}">
-                    <a href="/request-to-unblock?accountId=${account.getId()}"><fmt:message key="execute.requestToUnblockAccount"/></a>
+                    <a href="request-to-unblock?accountId=${account.getId()}"><fmt:message key="execute.requestToUnblockAccount"/></a>
                 </c:if>
                 </td>
             </tr>
@@ -68,7 +68,7 @@
         <table class="pagination-table">
             <tr>
                 <c:if test="${currentPage != 1}">
-                    <td><a href="/accounts?page=${currentPage - 1}"><fmt:message key="message.previous"/></a></td>
+                    <td><a href="accounts?page=${currentPage - 1}"><fmt:message key="message.previous"/></a></td>
                 </c:if>
                 <c:forEach begin="1" end="${noOfPages}" var="i">
                     <c:choose>
@@ -76,12 +76,12 @@
                             <td>${i}</td>
                         </c:when>
                         <c:otherwise>
-                            <td><a href="/accounts?page=${i}">${i}</a></td>
+                            <td><a href="accounts?page=${i}">${i}</a></td>
                         </c:otherwise>
                     </c:choose>
                 </c:forEach>
                 <c:if test="${currentPage lt noOfPages}">
-                    <td><a href="/accounts?page=${currentPage + 1}"><fmt:message key="message.next"/></a></td>
+                    <td><a href="accounts?page=${currentPage + 1}"><fmt:message key="message.next"/></a></td>
                 </c:if>
             </tr>
         </table>
@@ -91,13 +91,13 @@
         <div class="container">
 
         <p><fmt:message key="label.sortBy"/>
-            <a href="/payments?sorted-by=id">
+            <a href="payments?sorted-by=id">
                 <fmt:message key="button.number"/>
             </a>
-            <a href="/payments?sorted-by=price">
+            <a href="payments?sorted-by=price">
                 <fmt:message key="table.price"/>
             </a>
-            <a href="/payments?sorted-by=date">
+            <a href="payments?sorted-by=date">
                 <fmt:message key="table.date"/>
             </a>
         </p>
@@ -114,7 +114,7 @@
             <f:displayPayment payment="${payment}"/>
             <td>
                 <c:if test="${payment.getPaymentStatus()==1}">
-                    <a href="/accounts?paymentId=${payment.getId()}&paymentPrice=${payment.getPrice()}"><fmt:message key="table.makePayment"/></a>
+                    <a href="accounts?paymentId=${payment.getId()}&paymentPrice=${payment.getPrice()}"><fmt:message key="table.makePayment"/></a>
                 </c:if>
             </td>
             </tr>

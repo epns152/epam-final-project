@@ -23,22 +23,22 @@
 <%--        </c:when>--%>
         <c:when test="${user.getRole()=='admin'}">
             <div>
-                <a href="/users"><fmt:message key="label.users"/></a>
-                <a href="/accounts-to-unblock"><fmt:message key="label.accountsToUnblock"/></a>
-                <a href="/sign-out"><fmt:message key="label.signOut"/></a>
-                <a href="/lang?lang=en&current=${requestScope['javax.servlet.forward.request_uri']}">EN</a>
-                <a href="/lang?lang=ua&current=${requestScope['javax.servlet.forward.request_uri']}">UA</a>
+                <a href="users"><fmt:message key="label.users"/></a>
+                <a href="accounts-to-unblock"><fmt:message key="label.accountsToUnblock"/></a>
+                <a href="sign-out"><fmt:message key="label.signOut"/></a>
+                <a href="lang?lang=en&current=${requestScope['javax.servlet.forward.request_uri']}">EN</a>
+                <a href="lang?lang=ua&current=${requestScope['javax.servlet.forward.request_uri']}">UA</a>
             </div>
         </c:when>
         <c:when test="${user.getRole()=='customer'}">
             <div class="header-right">
-                <a href="/index.jsp"><fmt:message key="label.home"/></a>
-                <a href="/accounts?sorted-by=id"><fmt:message key="label.myAccounts"/></a>
-                <a href="/payments?sorted-by=id"><fmt:message key="label.myPayments"/></a>
-                <a href="/profile"><fmt:message key="label.profile"/></a>
-                <a href="/sign-out"><fmt:message key="label.signOut"/></a>
-                <a href="/lang?lang=en&current=${requestScope['javax.servlet.forward.request_uri']}">EN</a>
-                <a href="/lang?lang=ua&current=${requestScope['javax.servlet.forward.request_uri']}">UA</a>
+                <a href="index.jsp"><fmt:message key="label.home"/></a>
+                <a href="accounts?sorted-by=id"><fmt:message key="label.myAccounts"/></a>
+                <a href="payments?sorted-by=id"><fmt:message key="label.myPayments"/></a>
+                <a href="profile"><fmt:message key="label.profile"/></a>
+                <a href="sign-out"><fmt:message key="label.signOut"/></a>
+                <a href="lang?lang=en&current=${requestScope['javax.servlet.forward.request_uri']}">EN</a>
+                <a href="lang?lang=ua&current=${requestScope['javax.servlet.forward.request_uri']}">UA</a>
             </div>
         </c:when>
     </c:choose>
