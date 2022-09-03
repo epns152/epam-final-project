@@ -33,17 +33,18 @@ class UserPaymentsTest {
         when(req.getAttribute("adminDAO")).thenReturn(dao);
 
         when(req.getSession()).thenReturn(session);
-        when(dao.getAllUserPayments(anyInt())).thenReturn(payments);
+        when(dao.getAllUserPayments(anyInt(), anyInt(), anyInt())).thenReturn(payments);
         when(req.getRequestDispatcher(anyString())).thenReturn(dispatcher);
         when(req.getParameter(anyString())).thenReturn("0");
+        when(session.getAttribute("userId")).thenReturn(anyInt());
 
         servlet.doGet(req, resp);
 
-        verify(req, times(1)).getSession();
+        verify(req, times(3)).getSession();
         verify(req, times(1)).getAttribute("adminDAO");
-        verify(req, times(1)).getParameter(anyString());
+        verify(req, times(4)).getParameter(anyString());
 
-        assertThat(dao.getAllUserPayments(anyInt())).isEqualTo(payments);
+        assertThat(dao.getAllUserPayments(anyInt(), anyInt(), anyInt())).isEqualTo(payments);
     }
 
     @Test
@@ -59,14 +60,15 @@ class UserPaymentsTest {
         when(req.getAttribute("adminDAO")).thenReturn(dao);
 
         when(req.getSession()).thenReturn(session);
-        when(dao.getAllUserPayments(0)).thenThrow(RuntimeException.class);
+        when(dao.getAllUserPayments(anyInt(), anyInt(), anyInt())).thenThrow(RuntimeException.class);
         when(req.getRequestDispatcher(anyString())).thenReturn(dispatcher);
         when(req.getParameter(anyString())).thenReturn("0");
+        when(session.getAttribute("userId")).thenReturn(anyInt());
 
         servlet.doGet(req, resp);
 
-        verify(req, times(0)).getSession();
+        verify(req, times(2)).getSession();
         verify(req, times(1)).getAttribute("adminDAO");
-        verify(req, times(1)).getParameter(anyString());
+        verify(req, times(4)).getParameter(anyString());
     }
 }

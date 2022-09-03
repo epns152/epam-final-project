@@ -36,15 +36,15 @@ class MyPaymentsTest {
         when(req.getSession()).thenReturn(session);
         when(req.getAttribute("customerDAO")).thenReturn(dao);
         when(session.getAttribute("user")).thenReturn(user);
-        when(service.getPaymentsSortedBy(user, eq(anyString()))).thenReturn(payments);
+        when(service.getPaymentsSortedBy(user, eq(anyString()), anyInt(), anyInt())).thenReturn(payments);
         when(req.getRequestDispatcher(anyString())).thenReturn(dispatcher);
 
         servlet.doGet(req, resp);
 
         verify(req, times(2)).getSession();
         verify(req, times(1)).getAttribute("customerDAO");
-        verify(req, times(1)).getParameter(anyString());
+        verify(req, times(2)).getParameter(anyString());
 
-        assertThat(service.getPaymentsSortedBy(user, eq(anyString()))).isEqualTo(payments);
+        assertThat(service.getPaymentsSortedBy(user, eq(anyString()), anyInt(), anyInt())).isEqualTo(payments);
     }
 }

@@ -5,6 +5,9 @@ import java.util.Date;
 import java.util.Objects;
 
 public class Payment implements Serializable {
+
+    private static final long serialVersionUID = 30L;
+
     private int id;
     private double price;
     private String name;

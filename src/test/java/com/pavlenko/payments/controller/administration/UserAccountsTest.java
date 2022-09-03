@@ -32,19 +32,22 @@ class UserAccountsTest {
         ArrayList<Account> accounts = new ArrayList<>();
 
         when(req.getAttribute("adminDAO")).thenReturn(dao);
+        when(req.getAttribute("adminDAO")).thenReturn(dao);
 
         when(req.getSession()).thenReturn(session);
-        when(dao.getAllUserAccounts(anyInt())).thenReturn(accounts);
+        when(dao.getAllUserAccounts(anyInt(), anyInt(), anyInt())).thenReturn(accounts);
         when(req.getRequestDispatcher(anyString())).thenReturn(dispatcher);
         when(req.getParameter(anyString())).thenReturn("0");
+        when(session.getAttribute("userId")).thenReturn(anyInt());
+
 
         servlet.doGet(req, resp);
 
-        verify(req, times(2)).getSession();
+        verify(req, times(3)).getSession();
         verify(req, times(1)).getAttribute("adminDAO");
-        verify(req, times(2)).getParameter(anyString());
+        verify(req, times(4)).getParameter(anyString());
 
-        assertThat(dao.getAllUserPayments(anyInt())).isEqualTo(accounts);
+        assertThat(dao.getAllUserPayments(anyInt(), anyInt(), anyInt())).isEqualTo(accounts);
     }
 
     @Test
@@ -60,15 +63,15 @@ class UserAccountsTest {
         when(req.getAttribute("adminDAO")).thenReturn(dao);
 
         when(req.getSession()).thenReturn(session);
-        when(dao.getAllUserAccounts(anyInt())).thenThrow(RuntimeException.class);
+        when(dao.getAllUserAccounts(anyInt(), anyInt(), anyInt())).thenThrow(RuntimeException.class);
         when(req.getRequestDispatcher(anyString())).thenReturn(dispatcher);
         when(req.getParameter(anyString())).thenReturn("0");
+        when(session.getAttribute("userId")).thenReturn(anyInt());
 
         servlet.doGet(req, resp);
 
-        verify(req, times(0)).getSession();
+        verify(req, times(2)).getSession();
         verify(req, times(1)).getAttribute("adminDAO");
-        verify(req, times(1)).getParameter(anyString());
-
+        verify(req, times(4)).getParameter(anyString());
     }
 }

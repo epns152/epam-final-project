@@ -40,15 +40,15 @@ class MyAccountsTest {
 
         when(session.getAttribute("user")).thenReturn(user);
 
-        when(service.getAccountsSortedBy(user, eq(anyString()))).thenReturn(accounts);
+        when(service.getAccountsSortedBy(user, eq(anyString()), anyInt(), anyInt())).thenReturn(accounts);
         when(req.getRequestDispatcher(anyString())).thenReturn(dispatcher);
 
         servlet.doGet(req, resp);
 
-        verify(req, times(4)).getSession();
+        verify(req, times(2)).getSession();
         verify(req, times(1)).getAttribute("customerDAO");
-        verify(req, times(3)).getParameter(anyString());
+        verify(req, times(4)).getParameter(anyString());
 
-        assertThat(service.getAccountsSortedBy(user, eq(anyString()))).isEqualTo(accounts);
+        assertThat(service.getAccountsSortedBy(user, eq(anyString()), anyInt(), anyInt())).isEqualTo(accounts);
     }
 }

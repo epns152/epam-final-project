@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.sql.Date;
 
 public class User implements Serializable {
+
+    private static final long serialVersionUID = 37L;
+
     private final String role;
     private String firstname;
     private String lastname;

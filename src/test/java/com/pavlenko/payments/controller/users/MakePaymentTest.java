@@ -31,7 +31,7 @@ class MakePaymentTest {
 
         servlet.doGet(req, resp);
 
-        verify(req, times(0)).getSession();
+        verify(req, times(2)).getSession();
         verify(req, times(2)).getParameter(anyString());
         verify(req, times(1)).getAttribute("customerDAO");
         verify(dao, times(1)).makePayment(anyInt(), anyInt());

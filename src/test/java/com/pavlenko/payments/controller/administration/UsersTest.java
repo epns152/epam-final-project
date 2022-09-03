@@ -32,14 +32,14 @@ class UsersTest {
         when(req.getSession()).thenReturn(session);
         when(req.getAttribute("adminDAO")).thenReturn(dao);
 
-        when(dao.getAllUsers()).thenReturn(users);
+        when(dao.getAllUsers(anyInt(), anyInt())).thenReturn(users);
         when(req.getRequestDispatcher(anyString())).thenReturn(dispatcher);
 
         servlet.doGet(req, resp);
 
-        verify(req, times(2)).getSession();
+        verify(req, times(3)).getSession();
         verify(req, times(1)).getAttribute("adminDAO");
-        verify(req, times(0)).getParameter(anyString());
+        verify(req, times(1)).getParameter(anyString());
     }
 
     @Test
@@ -55,13 +55,13 @@ class UsersTest {
         when(req.getSession()).thenReturn(session);
         when(req.getAttribute("adminDAO")).thenReturn(dao);
 
-        when(dao.getAllUsers()).thenThrow(RuntimeException.class);
+        when(dao.getAllUsers(anyInt(), anyInt())).thenThrow(RuntimeException.class);
         when(req.getRequestDispatcher(anyString())).thenReturn(dispatcher);
 
         servlet.doGet(req, resp);
 
-        verify(req, times(1)).getSession();
+        verify(req, times(2)).getSession();
         verify(req, times(1)).getAttribute("adminDAO");
-        verify(req, times(0)).getParameter(anyString());
+        verify(req, times(1)).getParameter(anyString());
     }
 }
