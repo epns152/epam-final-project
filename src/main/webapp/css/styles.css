@@ -95,37 +95,28 @@ a:hover {
     max-width: 1000px;
     margin-right:auto;
     margin-left:auto;
-    /*display:flex;*/
-    /*justify-content:center;*/
     align-items:center;
-    /*min-height:100vh;*/
 }
 
 table {
     width:100%;
     border-spacing: 0;
     border-collapse: separate;
-    /*border:2px solid rgba(0, 0, 0, 0.5);;*/
 }
 
 .table-header {
-    /*display:flex;*/
     width:100%;
     background:#000;
-    /*padding:($half-spacing-unit * 1.5) 0;*/
 }
 
 tr {
-    /*display:flex;*/
-    padding: 0;
     margin: 0;
     width:100%;
-    padding:($half-spacing-unit * 1.5) 0;
+    /*padding:($half-spacing-unit * 1.5) 0;*/
 
 }
 
 td, .header__item {
-    /*flex: ;*/
     padding: 5px;
     margin: -3px;
     text-align:center;
@@ -142,3 +133,48 @@ td, .header__item {
     margin-left: auto;
     margin-right: auto;
 }
+
+#closeButtonReg{
+    color: red;
+    position: relative;
+    width: 10px;
+    height: 10px;
+    top: -265px;
+    left: 60%;
+    background: center;
+}
+#closeButtonSign{
+    color: red;
+    position: relative;
+    width: 10px;
+    height: 10px;
+    top: -150px;
+    left: 60%;
+    background: center;
+}
+
+input {
+    margin: 5px auto;
+}
+
+form {
+    width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.form-button {
+    margin-left: auto;
+    margin-right: auto;
+}
+/*div.hidden{*/
+/*    display: none;*/
+/*}*/
+/*div.hidden.show{*/
+/*    display: block;*/
+/*    position: absolute;*/
+/*    top: 40%;*/
+/*    z-index: 10;*/
+/*    left: 45%;*/
+/*    text-align: -webkit-center;*/
+/*}*/

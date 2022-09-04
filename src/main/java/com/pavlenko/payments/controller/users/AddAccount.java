@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.regex.Pattern;
 
 @WebServlet(name = "AddAccount", value = "/add-account")
 public class AddAccount extends HttpServlet {
@@ -22,14 +23,29 @@ public class AddAccount extends HttpServlet {
         User user = (User) req.getSession().getAttribute("user");
         int userId = user.getId();
         CustomerDAO customerDAO = (CustomerDAO) req.getAttribute("customerDAO");
-        try {
-            customerDAO.addAccount(userId, req.getParameter("name"), Double.parseDouble(req.getParameter("balance")));
-            LOG.info("made sql statement");
-            resp.sendRedirect("/accounts");
-            LOG.info("redirected to /accounts");
-        } catch (RuntimeException e) {
-            LOG.error("Exception caught", e);
-            resp.sendError(500, "Sorry, something went wrong...(((");
+        String name = req.getParameter("name");
+        if (validate(name)) {
+            try {
+                customerDAO.addAccount(userId, name, Double.parseDouble(req.getParameter("balance")));
+                LOG.info("made sql statement");
+                resp.sendRedirect("/accounts");
+                LOG.info("redirected to /accounts");
+            } catch (RuntimeException e) {
+                LOG.error("Exception caught", e);
+                resp.sendError(500, "Sorry, something went wrong...(((");
+            }
+        } else {
+            LOG.error("not valid data");
+            resp.sendError(404, "not valid data");
+            LOG.info("redirected to errorPage");
         }
+    }
+
+    private static boolean validate(String name) {
+        Pattern namePattern = Pattern.compile("(?=.{8,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z\\dа-яіїєА-ЯІЇЄ ]+(?<![_.])");
+        if (name == null) {
+            return false;
+        }
+        return namePattern.matcher(name).matches();
     }
 }

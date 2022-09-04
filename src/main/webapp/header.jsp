@@ -12,15 +12,16 @@
     <a href="/" class="logo">Payments</a>
 <%--    <div class="container">--%>
     <c:choose>
-<%--        <c:when test="${logged==false}">--%>
+<%--        <c:when test="${user==null}">--%>
 <%--            <div class="header-right">--%>
 <%--                <a class="active" href="/"><fmt:message key="label.home" /></a>--%>
-<%--                <a onclick="showForm('signIn')">Sign In</a>--%>
-<%--                <a onclick="showForm('register')">Register</a>--%>
-<%--                <a href="/lang?lang=en&current=${requestScope['javax.servlet.forward.request_uri']}">EN</a>--%>
-<%--                <a href="/lang?lang=ua&current=${requestScope['javax.servlet.forward.request_uri']}">UA</a>--%>
+<%--                <button onclick="showForm('login')"><fmt:message key="button.login"/></button>--%>
+<%--                <button onclick="showForm('register')"><fmt:message key="button.signIn"/></button>--%>
+<%--                <a href="lang?lang=en&current=${requestScope['javax.servlet.forward.request_uri']}">EN</a>--%>
+<%--                <a href="lang?lang=ua&current=${requestScope['javax.servlet.forward.request_uri']}">UA</a>--%>
 <%--            </div>--%>
 <%--        </c:when>--%>
+
         <c:when test="${user.getRole()=='admin'}">
             <div>
                 <a href="users"><fmt:message key="label.users"/></a>

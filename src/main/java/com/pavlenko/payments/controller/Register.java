@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.regex.Pattern;
 
 @WebServlet(name = "Register", value = "/register")
 public class Register extends HttpServlet {
@@ -21,15 +22,30 @@ public class Register extends HttpServlet {
         String lastname = req.getParameter("lastname");
         String login = req.getParameter("login");
         String password = req.getParameter("password");
-        CustomerDAO customerDAO = (CustomerDAO) req.getAttribute("customerDAO");
-        if (!customerDAO.accountExist(login, password)) {
-            customerDAO.register(login, password, firstname, lastname);
-            LOG.info("made sql statement (register)");
-            req.getSession().setAttribute("logged", true);
-            req.getSession().setAttribute("user", customerDAO.login(login, password));
-            LOG.info("made sql statement (login)");
+        if (validate(login, firstname, lastname)) {
+            CustomerDAO customerDAO = (CustomerDAO) req.getAttribute("customerDAO");
+            if (!customerDAO.accountExist(login, password)) {
+                customerDAO.register(login, password, firstname, lastname);
+                LOG.info("made sql statement (register)");
+                req.getSession().setAttribute("logged", true);
+                req.getSession().setAttribute("user", customerDAO.login(login, password));
+                LOG.info("made sql statement (login)");
+            }
+            resp.sendRedirect("index.jsp");
+            LOG.info("redirected to index.jsp");
+        } else {
+            LOG.error("not valid data");
+            resp.sendError(404, "not valid data");
+            LOG.info("redirected to errorPage");
         }
-        resp.sendRedirect("index.jsp");
-        LOG.info("redirected to index.jsp");
+    }
+
+    private static boolean validate(String login, String firstname, String lastname) {
+        Pattern loginPattern = Pattern.compile("(?=.{3,20}$)(?![_.])(?!.*[_.]{2})\\w+(?<![_.])");
+        Pattern namePattern = Pattern.compile("(?=.{3,20}$)(?![_.])(?!.*[_.]{2})[A-ZА-ЯІЄЇ][a-zа-яіїє]+(?<![_.])");
+        if (login == null || firstname == null || lastname == null) {
+            return false;
+        }
+        return loginPattern.matcher(login).matches() && namePattern.matcher(firstname).matches() && namePattern.matcher(lastname).matches();
     }
 }
