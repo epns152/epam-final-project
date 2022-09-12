@@ -32,7 +32,8 @@ class AddPaymentTest {
         when(session.getAttribute("user")).thenReturn(user);
 
         when(dao.addPayment(anyInt(), anyString(), anyInt())).thenReturn(true);
-        when(req.getParameter(anyString())).thenReturn("0");
+        when(req.getParameter("price")).thenReturn("0");
+        when(req.getParameter("name")).thenReturn("namename");
 
         servlet.doPost(req, resp);
 
@@ -58,7 +59,8 @@ class AddPaymentTest {
         when(session.getAttribute("user")).thenReturn(user);
 
         when(dao.addPayment(anyInt(), anyString(), anyDouble())).thenThrow(RuntimeException.class);
-        when(req.getParameter(anyString())).thenReturn("0");
+        when(req.getParameter("price")).thenReturn("0");
+        when(req.getParameter("name")).thenReturn("namename");
 
         servlet.doPost(req, resp);
 

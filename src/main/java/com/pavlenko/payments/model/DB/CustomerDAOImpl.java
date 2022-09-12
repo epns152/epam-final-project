@@ -13,13 +13,22 @@ public class CustomerDAOImpl implements CustomerDAO {
     private static final Logger LOG = LoggerFactory.getLogger(CustomerDAOImpl.class);
     private int noOfRecordsAccounts;
     private int noOfRecordsPayments;
+    private static final String GET_ALL_INFO = "SELECT firstname, lastname, registration_date, user_status FROM users WHERE id = ? and user_role = ?;";
+    private static final String ACCOUNT_EXIST = "SELECT COUNT(*) FROM users WHERE login = ? and password = ?;";
+    private static final String LOGIN = "SELECT id, user_role, user_status FROM users WHERE login = ? and password = ?;";
+    private static final String REGISTER = "INSERT users(login, password, firstname, lastname) VALUES (?, ?, ?, ?);";
+    private static final String ADD_ACCOUNT = "INSERT accounts(account_name, balance_amount, Users_id) VALUES (?, ?, ?);";
+    private static final String BLOCK_ACCOUNT = "UPDATE accounts set account_status = ? where Users_id = ? and id = ?;";
+    private static final String REQUEST_TO_UNBLOCK_ACCOUNT = "UPDATE accounts set unblock_request = ? where Users_id = ? and id = ?;";
+    private static final String ADD_PAYMENT = "INSERT payments(price, payment_name, users_id) VALUES (?, ?, ?);";
+    private static final String MAKE_PAYMENT = "update accounts set balance_amount = balance_amount - (select price from payments where id = ? limit 1)  where id = ?;";
+
 
 
     @Override
     public User getAllInfo(User user) {
-        String query = "SELECT firstname, lastname, registration_date, user_status FROM users WHERE id = ? and user_role = ?;";
         try (Connection con = ConnectionPool.getConnection()) {
-            PreparedStatement preparedStatement = con.prepareStatement(query);
+            PreparedStatement preparedStatement = con.prepareStatement(GET_ALL_INFO);
             preparedStatement.setInt(1, user.getId());
             preparedStatement.setString(2, user.getRole());
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -40,9 +49,8 @@ public class CustomerDAOImpl implements CustomerDAO {
 
     @Override
     public boolean accountExist(String login, String pass) {
-        String query = "SELECT COUNT(*) FROM users WHERE login = ? and password = ?;";
         try (Connection con = ConnectionPool.getConnection()) {
-            PreparedStatement preparedStatement = con.prepareStatement(query);
+            PreparedStatement preparedStatement = con.prepareStatement(ACCOUNT_EXIST);
             preparedStatement.setString(1, login);
             preparedStatement.setString(2, md5(pass));
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -57,9 +65,8 @@ public class CustomerDAOImpl implements CustomerDAO {
 
     @Override
     public User login(String login, String pass) {
-        String query = "SELECT id, user_role, user_status FROM users WHERE login = ? and password = ?;";
         try (Connection con = ConnectionPool.getConnection()) {
-            PreparedStatement preparedStatement = con.prepareStatement(query);
+            PreparedStatement preparedStatement = con.prepareStatement(LOGIN);
             preparedStatement.setString(1, login);
             preparedStatement.setString(2, md5(pass));
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -84,9 +91,8 @@ public class CustomerDAOImpl implements CustomerDAO {
 
     @Override
     public boolean register(String login, String pass, String firstName, String lastName) {
-        String query = "INSERT users(login, password, firstname, lastname) VALUES (?, ?, ?, ?);";
         try (Connection con = ConnectionPool.getConnection()) {
-            PreparedStatement preparedStatement = con.prepareStatement(query);
+            PreparedStatement preparedStatement = con.prepareStatement(REGISTER);
             preparedStatement.setString(1, login);
             preparedStatement.setString(2, md5(pass));
             preparedStatement.setString(3, firstName);
@@ -102,9 +108,8 @@ public class CustomerDAOImpl implements CustomerDAO {
 
     @Override
     public boolean addAccount(int userId, String name, double balance) {
-        String query = "INSERT accounts(account_name, balance_amount, Users_id) VALUES (?, ?, ?);";
         try (Connection con = ConnectionPool.getConnection()) {
-            PreparedStatement preparedStatement = con.prepareStatement(query);
+            PreparedStatement preparedStatement = con.prepareStatement(ADD_ACCOUNT);
             preparedStatement.setString(1, name);
             preparedStatement.setDouble(2, balance);
             preparedStatement.setInt(3, userId);
@@ -119,9 +124,8 @@ public class CustomerDAOImpl implements CustomerDAO {
 
     @Override
     public boolean blockAccount(int userId, int accountId) {
-        String query = "UPDATE accounts set account_status = ? where Users_id = ? and id = ?;";
         try (Connection con = ConnectionPool.getConnection()) {
-            PreparedStatement preparedStatement = con.prepareStatement(query);
+            PreparedStatement preparedStatement = con.prepareStatement(BLOCK_ACCOUNT);
             preparedStatement.setString(1, "blocked");
             preparedStatement.setInt(3, accountId);
             preparedStatement.setInt(2, userId);
@@ -136,9 +140,8 @@ public class CustomerDAOImpl implements CustomerDAO {
 
     @Override
     public boolean requestToUnblockAccount(int userId, int accountId) {
-        String query = "UPDATE accounts set unblock_request = ? where Users_id = ? and id = ?;";
         try (Connection con = ConnectionPool.getConnection()) {
-            PreparedStatement preparedStatement = con.prepareStatement(query);
+            PreparedStatement preparedStatement = con.prepareStatement(REQUEST_TO_UNBLOCK_ACCOUNT);
             preparedStatement.setInt(1, 1);
             preparedStatement.setInt(3, accountId);
             preparedStatement.setInt(2, userId);
@@ -153,9 +156,8 @@ public class CustomerDAOImpl implements CustomerDAO {
 
     @Override
     public boolean addPayment(int userId, String name, double price) {
-        String query = "INSERT payments(price, payment_name, users_id) VALUES (?, ?, ?);";
         try (Connection con = ConnectionPool.getConnection()) {
-            PreparedStatement preparedStatement = con.prepareStatement(query);
+            PreparedStatement preparedStatement = con.prepareStatement(ADD_PAYMENT);
             preparedStatement.setDouble(1, price);
             preparedStatement.setString(2, name);
             preparedStatement.setInt(3, userId);
@@ -233,13 +235,11 @@ public class CustomerDAOImpl implements CustomerDAO {
 
     @Override
     public boolean makePayment(int accountId, int paymentId) {
-        String query = "update accounts set balance_amount = balance_amount - " +
-                "(select price from payments where id = ? limit 1)  where id = ?;";
         Connection con = null;
         try {
             con = ConnectionPool.getConnection();
             con.setAutoCommit(false);
-            PreparedStatement preparedStatement = con.prepareStatement(query);
+            PreparedStatement preparedStatement = con.prepareStatement(MAKE_PAYMENT);
             preparedStatement.setInt(1, paymentId);
             preparedStatement.setInt(2, accountId);
             preparedStatement.executeUpdate();

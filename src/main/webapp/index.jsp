@@ -30,7 +30,7 @@
         <div>
             <input type="text" name="login" pattern="(?=.{3,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9_]+(?<![_.])"
                    title="From 3 to 20 characters without any _ or . e.g. asdf or asdf_qwerty1">
-            <label><fmt:message key="label.login"/></label>
+            <label><fmt:message key="form.login"/></label>
         </div>
         <div>
             <input type="password" name="password">
@@ -55,7 +55,7 @@
         <div>
             <input type="text" name="login" pattern="(?=.{3,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9_]+(?<![_.])"
                    title="From 3 to 20 characters without any _ or . e.g. asdf or asdf_qwerty1">
-            <label><fmt:message key="label.login"/></label>
+            <label><fmt:message key="form.login"/></label>
         </div>
         <div>
             <input type="password" name="password">

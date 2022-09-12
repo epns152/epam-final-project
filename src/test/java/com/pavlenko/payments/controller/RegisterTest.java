@@ -29,17 +29,17 @@ class RegisterTest {
         when(req.getAttribute("customerDAO")).thenReturn(dao);
         when(req.getParameter("login")).thenReturn("login");
         when(req.getParameter("password")).thenReturn("pass");
-        when(req.getParameter("firstname")).thenReturn("f");
-        when(req.getParameter("lastname")).thenReturn("l");
+        when(req.getParameter("firstname")).thenReturn("Firstname");
+        when(req.getParameter("lastname")).thenReturn("Lastname");
 
-        when(dao.register("login", "pass", "f", "l")).thenReturn(true);
+        when(dao.register("login", "pass", "Firstname", "Lastname")).thenReturn(true);
         when(dao.login("login", "pass")).thenReturn(user);
         when(req.getSession()).thenReturn(session);
 
         servlet.doPost(req, resp);
 
         verify(dao, times(1)).login("login", "pass");
-        verify(dao, times(1)).register("login", "pass", "f", "l");
+        verify(dao, times(1)).register("login", "pass", "Firstname", "Lastname");
         verify(req, times(2)).getSession();
         verify(req, times(1)).getAttribute("customerDAO");
         verify(req, times(4)).getParameter(anyString());

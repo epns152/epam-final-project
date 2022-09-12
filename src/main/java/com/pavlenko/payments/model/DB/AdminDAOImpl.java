@@ -16,6 +16,13 @@ public class AdminDAOImpl implements AdminDAO {
     private int noOfRecordsPayments;
     private int noOfRecordsUsers;
 
+    private static final String BLOCK_USER = "update users set user_status = 'blocked' where id = ?";
+    private static final String UNBLOCK_USER = "update users set user_status = 'unblocked' where id = ?";
+    private static final String BLOCK_ACCOUNT = "update accounts set account_status = 'blocked' where id = ?";
+    private static final String UNBLOCK_ACCOUNT = "update accounts set account_status = 'unblocked', unblock_request = 0 where id = ?";
+    private static final String GET_ALL_ACCOUNTS_WITH_REQUEST_TO_UNBLOCK =
+            "SELECT id, account_name, balance_amount, unblock_request, account_status " +
+                    "FROM accounts WHERE unblock_request = 1;";
 
     @Override
     public ArrayList<User> getAllUsers(int offset, int noOfRecords) {
@@ -114,9 +121,8 @@ public class AdminDAOImpl implements AdminDAO {
 
     @Override
     public boolean blockUser(int userId) {
-        String query = "update users set user_status = 'blocked' where id = ?";
         try (Connection con = ConnectionPool.getConnection()) {
-            PreparedStatement preparedStatement = con.prepareStatement(query);
+            PreparedStatement preparedStatement = con.prepareStatement(BLOCK_USER);
             preparedStatement.setInt(1, userId);
             preparedStatement.executeUpdate();
             LOG.info("user blocked by admin");
@@ -129,9 +135,8 @@ public class AdminDAOImpl implements AdminDAO {
 
     @Override
     public boolean unblockUser(int userId) {
-        String query = "update users set user_status = 'unblocked' where id = ?";
         try (Connection con = ConnectionPool.getConnection()) {
-            PreparedStatement preparedStatement = con.prepareStatement(query);
+            PreparedStatement preparedStatement = con.prepareStatement(UNBLOCK_USER);
             preparedStatement.setInt(1, userId);
             preparedStatement.executeUpdate();
             LOG.info("user unblocked by admin");
@@ -144,9 +149,8 @@ public class AdminDAOImpl implements AdminDAO {
 
     @Override
     public boolean blockAccount(int accountId) {
-        String query = "update accounts set account_status = 'blocked' where id = ?";
         try (Connection con = ConnectionPool.getConnection()) {
-            PreparedStatement preparedStatement = con.prepareStatement(query);
+            PreparedStatement preparedStatement = con.prepareStatement(BLOCK_ACCOUNT);
             preparedStatement.setInt(1, accountId);
             preparedStatement.executeUpdate();
             LOG.info("account blocked by admin");
@@ -159,9 +163,8 @@ public class AdminDAOImpl implements AdminDAO {
 
     @Override
     public boolean unblockAccount(int accountId) {
-        String query = "update accounts set account_status = 'unblocked', unblock_request = 0 where id = ?";
         try (Connection con = ConnectionPool.getConnection()) {
-            PreparedStatement preparedStatement = con.prepareStatement(query);
+            PreparedStatement preparedStatement = con.prepareStatement(UNBLOCK_ACCOUNT);
             preparedStatement.setInt(1, accountId);
             preparedStatement.executeUpdate();
             LOG.info("account unblocked by admin");
@@ -175,10 +178,8 @@ public class AdminDAOImpl implements AdminDAO {
     @Override
     public ArrayList<Account> getAllBlockedAccountsWithRequestToUnblock() {
         ArrayList<Account> accounts = new ArrayList<>();
-        String query = "SELECT id, account_name, balance_amount, unblock_request, account_status " +
-                "FROM accounts WHERE unblock_request = 1;";
         try (Connection con = ConnectionPool.getConnection()) {
-            PreparedStatement preparedStatement = con.prepareStatement(query);
+            PreparedStatement preparedStatement = con.prepareStatement(GET_ALL_ACCOUNTS_WITH_REQUEST_TO_UNBLOCK);
             ResultSet resultSet;
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {

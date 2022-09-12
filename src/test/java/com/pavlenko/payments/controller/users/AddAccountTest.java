@@ -34,7 +34,8 @@ class AddAccountTest {
         when(session.getAttribute("user")).thenReturn(user);
 
         when(dao.addAccount(anyInt(), anyString(), anyInt())).thenReturn(true);
-        when(req.getParameter(anyString())).thenReturn("0");
+        when(req.getParameter("balance")).thenReturn("0");
+        when(req.getParameter("name")).thenReturn("namename");
 
         servlet.doPost(req, resp);
 
@@ -60,9 +61,8 @@ class AddAccountTest {
         when(session.getAttribute("user")).thenReturn(user);
 
         when(dao.addAccount(anyInt(), anyString(), anyDouble())).thenThrow(RuntimeException.class);
-
-
-        when(req.getParameter(anyString())).thenReturn("0");
+        when(req.getParameter("balance")).thenReturn("0");
+        when(req.getParameter("name")).thenReturn("namename");
 
         servlet.doPost(req, resp);
 
