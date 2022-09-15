@@ -130,7 +130,7 @@ td, .header__item {
 }
 
 .pagination-table {
-    width: 400px;
+    width: auto;
     margin-left: auto;
     margin-right: auto;
 }
@@ -189,5 +189,13 @@ div.hidden.show {
 
 .menu-item {
     margin-right: 30px;
+}
+
+.pagination-item {
+    width: 30px;
+}
+
+.pagination-scroll {
+    width: 50px;
 }
 

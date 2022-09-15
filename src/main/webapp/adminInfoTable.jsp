@@ -44,22 +44,33 @@
 
         <table class="pagination-table">
             <tr>
-                <c:if test="${currentPage != 1}">
-                    <td><a href="users?page=${currentPage - 1}"><fmt:message key="message.previous"/></a></td>
-                </c:if>
+                <c:choose>
+                    <c:when test="${currentPage != 1}">
+                        <td class="pagination-scroll"><a href="users?page=${currentPage - 1}"><fmt:message key="message.previous"/></a></td>
+                    </c:when>
+                    <c:otherwise>
+                        <td class="pagination-scroll"><fmt:message key="message.previous"/></td>
+                    </c:otherwise>
+                </c:choose>
                 <c:forEach begin="1" end="${noOfPages}" var="i">
                     <c:choose>
                         <c:when test="${currentPage eq i}">
-                            <td>${i}</td>
+                            <td class="pagination-item">${i}</td>
                         </c:when>
                         <c:otherwise>
-                            <td><a href="users?page=${i}">${i}</a></td>
+                            <td class="pagination-item"><a href="users?page=${i}">${i}</a></td>
                         </c:otherwise>
                     </c:choose>
                 </c:forEach>
-                <c:if test="${currentPage lt noOfPages}">
-                    <td><a href="users?page=${currentPage + 1}"><fmt:message key="message.next"/></a></td>
-                </c:if>
+
+                <c:choose>
+                    <c:when test="${currentPage lt noOfPages}">
+                        <td class="pagination-scroll"><a href="users?page=${currentPage + 1}"><fmt:message key="message.next"/></a></td>
+                    </c:when>
+                    <c:otherwise>
+                        <td class="pagination-scroll"><fmt:message key="message.next"/></td>
+                    </c:otherwise>
+                </c:choose>
             </tr>
         </table>
         ${users=null}
@@ -90,22 +101,32 @@
 
         <table class="pagination-table">
             <tr>
-                <c:if test="${currentPage != 1}">
-                    <td><a href="user-payments?page=${currentPage - 1}"><fmt:message key="message.previous"/></a></td>
-                </c:if>
+                <c:choose>
+                    <c:when test="${currentPage != 1}">
+                        <td class="pagination-scroll"><a href="user-payments?page=${currentPage - 1}"><fmt:message key="message.previous"/></a></td>
+                    </c:when>
+                    <c:otherwise>
+                        <td class="pagination-scroll"><fmt:message key="message.previous"/></td>
+                    </c:otherwise>
+                </c:choose>
                 <c:forEach begin="1" end="${noOfPages}" var="i">
                     <c:choose>
                         <c:when test="${currentPage eq i}">
-                            <td>${i}</td>
+                            <td class="pagination-item">${i}</td>
                         </c:when>
                         <c:otherwise>
-                            <td><a href="user-payments?page=${i}">${i}</a></td>
+                            <td class="pagination-item"><a href="user-payments?page=${i}">${i}</a></td>
                         </c:otherwise>
                     </c:choose>
                 </c:forEach>
-                <c:if test="${currentPage lt noOfPages}">
-                    <td><a href="user-payments?page=${currentPage + 1}"><fmt:message key="message.next"/></a></td>
-                </c:if>
+                <c:choose>
+                    <c:when test="${currentPage lt noOfPages}">
+                        <td class="pagination-scroll"><a href="user-payments?page=${currentPage + 1}"><fmt:message key="message.next"/></a></td>
+                    </c:when>
+                    <c:otherwise>
+                        <td class="pagination-scroll"><fmt:message key="message.next"/></td>
+                    </c:otherwise>
+                </c:choose>
             </tr>
         </table>
         ${payments=null}
@@ -147,22 +168,32 @@
         </div>
         <table class="pagination-table">
             <tr>
-                <c:if test="${currentPage != 1}">
-                    <td><a href="user-accounts?page=${currentPage - 1}"><fmt:message key="message.previous"/></a></td>
-                </c:if>
+                <c:choose>
+                    <c:when test="${currentPage != 1}">
+                        <td class="pagination-scroll"><a href="user-accounts?page=${currentPage - 1}"><fmt:message key="message.previous"/></a></td>
+                    </c:when>
+                    <c:otherwise>
+                        <td class="pagination-scroll"><fmt:message key="message.previous"/></td>
+                    </c:otherwise>
+                </c:choose>
                 <c:forEach begin="1" end="${noOfPages}" var="i">
                     <c:choose>
                         <c:when test="${currentPage eq i}">
-                            <td>${i}</td>
+                            <td class="pagination-item">${i}</td>
                         </c:when>
                         <c:otherwise>
-                            <td><a href="user-accounts?page=${i}">${i}</a></td>
+                            <td class="pagination-item"><a href="user-accounts?page=${i}">${i}</a></td>
                         </c:otherwise>
                     </c:choose>
                 </c:forEach>
-                <c:if test="${currentPage lt noOfPages}">
-                    <td><a href="user-accounts?page=${currentPage + 1}"><fmt:message key="message.next"/></a></td>
-                </c:if>
+                <c:choose>
+                    <c:when test="${currentPage lt noOfPages}">
+                        <td class="pagination-scroll"><a href="user-accounts?page=${currentPage + 1}"><fmt:message key="message.next"/></a></td>
+                    </c:when>
+                    <c:otherwise>
+                        <td class="pagination-scroll"><fmt:message key="message.next"/></td>
+                    </c:otherwise>
+                </c:choose>
             </tr>
         </table>
         ${accounts=null}

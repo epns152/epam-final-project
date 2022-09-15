@@ -27,6 +27,12 @@ public class MyAccounts extends HttpServlet {
         if (req.getParameter("page") != null) {
             page = Integer.parseInt(req.getParameter("page"));
         }
+        if (req.getSession().getAttribute("accounts-page") == null || req.getParameter("page") != null) {
+            req.getSession().setAttribute("accounts-page", page);
+        }
+        if (req.getParameter("page") == null) {
+            page = (int) req.getSession().getAttribute("accounts-page");
+        }
         User user = (User) req.getSession().getAttribute("user");
         CustomerDAO customerDAO = (CustomerDAO) req.getAttribute("customerDAO");
 
@@ -35,6 +41,12 @@ public class MyAccounts extends HttpServlet {
         String sortingCriterion = req.getParameter("sorted-by");
         if (sortingCriterion == null) {
             sortingCriterion = "id";
+        }
+        if (req.getSession().getAttribute("accounts-sorted-by") == null || req.getParameter("sorted-by") != null) {
+            req.getSession().setAttribute("accounts-sorted-by", sortingCriterion);
+        }
+        if (req.getParameter("sorted-by") == null) {
+            sortingCriterion = (String) req.getSession().getAttribute("accounts-sorted-by");
         }
         try {
             ArrayList<Account> accounts = service.getAccountsSortedBy(user, sortingCriterion, (page - 1) * recordsPerPage, recordsPerPage);

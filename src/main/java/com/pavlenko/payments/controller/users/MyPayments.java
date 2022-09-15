@@ -27,13 +27,26 @@ public class MyPayments extends HttpServlet {
         if (req.getParameter("page") != null) {
             page = Integer.parseInt(req.getParameter("page"));
         }
-
+        if (req.getSession().getAttribute("payments-page") == null || req.getParameter("page") != null) {
+            req.getSession().setAttribute("payments-page", page);
+        }
+        if (req.getParameter("page") == null) {
+            page = (int) req.getSession().getAttribute("payments-page");
+        }
         User user = (User) req.getSession().getAttribute("user");
         CustomerDAO customerDAO = (CustomerDAO) req.getAttribute("customerDAO");
+
         CustomerService service = new CustomerService(customerDAO);
+
         String sortingCriterion = req.getParameter("sorted-by");
         if (sortingCriterion == null) {
             sortingCriterion = "id";
+        }
+        if (req.getSession().getAttribute("payments-sorted-by") == null || req.getParameter("sorted-by") != null) {
+            req.getSession().setAttribute("payments-sorted-by", sortingCriterion);
+        }
+        if (req.getParameter("sorted-by") == null) {
+            sortingCriterion = (String) req.getSession().getAttribute("payments-sorted-by");
         }
         try {
             ArrayList<Payment> payments = service.getPaymentsSortedBy(user, sortingCriterion, (page - 1) * recordsPerPage, recordsPerPage);
