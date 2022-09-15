@@ -73,7 +73,7 @@ public interface CustomerDAO {
      * @param  price    payment price
      * @return          true if {@link Payment} was added and false if it's not
      */
-    boolean addPayment(int userId, String name, double price);
+    boolean addPayment(int userId, String name, double price, long receiveCard);
     /**
      *
      * @param  user         users accounts will return

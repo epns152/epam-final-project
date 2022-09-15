@@ -15,7 +15,7 @@
                     <label><fmt:message key="label.name"/></label>
                 </div>
                 <div>
-                    <input type="text" name="balance" pattern="\d+\.\d*|\d{1,5}" title="Example : 123 or 123.123">
+                    <input type="number" name="balance" step="0.01">
                     <label><fmt:message key="label.balance"/></label>
                 </div>
                 <button type="submit"><fmt:message key="button.addAccount"/></button>
@@ -30,7 +30,11 @@
                     <label><fmt:message key="label.name"/></label>
                 </div>
                 <div>
-                    <input type="text" name="price" pattern="\d+\.\d*|\d{1,5}" title="Example : 123 or 123.123">
+                    <input type="number" name="receiveCard" step="1">
+                    <label><fmt:message key="label.cardNumber"/></label>
+                </div>
+                <div>
+                    <input type="number" name="price" step="0.01">
                     <label><fmt:message key="label.Price"/></label>
                 </div>
                 <button type="submit"><fmt:message key="button.addPayment"/></button>

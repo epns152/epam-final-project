@@ -26,7 +26,7 @@ public class AddPayment extends HttpServlet {
         String name = req.getParameter("name");
         if (validate(name)) {
             try {
-                customerDAO.addPayment(userId, name, Double.parseDouble(req.getParameter("price")));
+                customerDAO.addPayment(userId, name, Double.parseDouble(req.getParameter("price")), Long.parseLong(req.getParameter("receiveCard")));
                 LOG.info("made sql statement");
                 resp.sendRedirect("/payments");
                 LOG.info("redirected to /payments");

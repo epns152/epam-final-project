@@ -24,6 +24,14 @@
             ${payment.getPrice()}
         </td>
         <td>
+            ${payment.getReceivedCard()}
+        </td>
+        <td>
+            <c:if test="${payment.getSentCard()!=0}">
+                ${payment.getSentCard()}
+            </c:if>
+        </td>
+        <td>
             <c:choose>
                 <c:when test="${payment.getPaymentStatus() == 0}">
                     <fmt:message key="status.sent"/>

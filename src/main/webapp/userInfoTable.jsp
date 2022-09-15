@@ -28,6 +28,7 @@
                 <td class="header__item"><fmt:message key="table.number"/></td>
                 <td class="header__item"><fmt:message key="table.balance"/></td>
                 <td class="header__item"><fmt:message key="table.name"/></td>
+                <td class="header__item"><fmt:message key="table.cardNumber"/></td>
                 <td class="header__item"><fmt:message key="table.status"/></td>
                 <td class="header__item"><fmt:message key="table.request"/></td>
                 <td class="header__item"><fmt:message key="table.requestOrBlock"/></td>
@@ -38,7 +39,8 @@
                             index="${account.getId()}"
                             balance="${account.getBalance()}"
                             status="${account.getStatus()}"
-                            unblockreq="${account.getIsRequestedToUnblock()}"/>
+                            unblockreq="${account.getIsRequestedToUnblock()}"
+                            cardNum="${account.getCardNum()}"/>
                 <td>
                     <c:if test="${paymentId!=null && account.getStatus()=='unblocked'}">
                         <c:choose>
@@ -61,8 +63,8 @@
                 </c:if>
                 </td>
                 <td>
-                    <form action="replenish" method="post">
-                        <input type="text" name="topUpAmount" pattern="\d+\.\d*|\d{1,5}" title="Example : 123 or 123.123">
+                    <form action="replenish" method="post" style="width: 240px">
+                        <input type="number" name="topUpAmount" step="0.01" style="width: 120px">
                         <input name="accountId" type="number" value="${account.getId()}" hidden/>
                         <button type="submit"><fmt:message key="label.replenish"/></button>
                     </form>
@@ -117,6 +119,8 @@
             <td class="header__item"><fmt:message key="table.number"/></td>
             <td class="header__item"><fmt:message key="table.name"/></td>
             <td class="header__item"><fmt:message key="table.price"/></td>
+            <td class="header__item"><fmt:message key="table.receiveCard"/></td>
+            <td class="header__item"><fmt:message key="table.sendCard"/></td>
             <td class="header__item"><fmt:message key="table.status"/></td>
             <td class="header__item"><fmt:message key="table.date"/></td>
             <td class="header__item"><fmt:message key="table.makePayment"/></td>

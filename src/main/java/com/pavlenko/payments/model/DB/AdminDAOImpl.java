@@ -17,10 +17,9 @@ public class AdminDAOImpl implements AdminDAO {
     private int noOfRecordsUsers;
 
     private static final String BLOCK_USER = "update users set user_status = 'blocked' where id = ?";
-    private static final String GET_ALL_USER_PAYMENTS = "SELECT SQL_CALC_FOUND_ROWS id, price, payment_name, creation_date, payment_status, account_id " +
+    private static final String GET_ALL_USER_PAYMENTS = "SELECT SQL_CALC_FOUND_ROWS id, price, payment_name, creation_date, payment_status, account_number_received, account_number_sent " +
             "FROM payments WHERE users_id = ? limit ?, ?;";
-
-    private static final String GET_ALL_USER_ACCOUNTS = "SELECT SQL_CALC_FOUND_ROWS id, account_name, balance_amount, unblock_request, account_status " +
+    private static final String GET_ALL_USER_ACCOUNTS = "SELECT SQL_CALC_FOUND_ROWS id, account_name, balance_amount, unblock_request, account_status, card_id " +
             "FROM accounts WHERE Users_id = ? limit ?, ?;";
     private static final String GET_ALL_USERS = "SELECT SQL_CALC_FOUND_ROWS id, firstname, lastname, user_status, user_role, registration_date " +
             "FROM users WHERE user_role = 'customer' limit ?, ?;";
@@ -28,7 +27,7 @@ public class AdminDAOImpl implements AdminDAO {
     private static final String BLOCK_ACCOUNT = "update accounts set account_status = 'blocked' where id = ?";
     private static final String UNBLOCK_ACCOUNT = "update accounts set account_status = 'unblocked', unblock_request = 0 where id = ?";
     private static final String GET_ALL_ACCOUNTS_WITH_REQUEST_TO_UNBLOCK =
-            "SELECT id, account_name, balance_amount, unblock_request, account_status " +
+            "SELECT id, account_name, balance_amount, unblock_request, account_status, card_id " +
                     "FROM accounts WHERE unblock_request = 1;";
 
     @Override
@@ -78,8 +77,9 @@ public class AdminDAOImpl implements AdminDAO {
                 String paymentName = resultSet.getString(3);
                 Date date = resultSet.getDate(4);
                 int paymentStatus = resultSet.getInt(5);
-                int accountId = resultSet.getInt(6);
-                payments.add(new Payment(id, price, paymentName, date, paymentStatus, accountId));
+                long cardNumReceived = resultSet.getLong(6);
+                long cardNumSent = resultSet.getLong(7);
+                payments.add(new Payment(id, price, paymentName, date, paymentStatus, cardNumReceived, cardNumSent));
             }
             resultSet.close();
             resultSet = preparedStatement.executeQuery("SELECT FOUND_ROWS()");
@@ -101,6 +101,8 @@ public class AdminDAOImpl implements AdminDAO {
         try (Connection con = ConnectionPool.getConnection()) {
             PreparedStatement preparedStatement = con.prepareStatement(GET_ALL_USER_ACCOUNTS);
             preparedStatement.setInt(1, userId);
+            preparedStatement.setInt(2, offset);
+            preparedStatement.setInt(3, noOfRecords);
             ResultSet resultSet;
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
@@ -109,7 +111,8 @@ public class AdminDAOImpl implements AdminDAO {
                 double balanceAmount = resultSet.getDouble(3);
                 int unblockRequest = resultSet.getInt(4);
                 String accountStatus = resultSet.getString(5);
-                accounts.add(new Account(id, balanceAmount, accountName, accountStatus, unblockRequest));
+                long cardNum = resultSet.getLong(6);
+                accounts.add(new Account(id, balanceAmount, accountName, accountStatus, unblockRequest, cardNum));
             }
             resultSet.close();
             resultSet = preparedStatement.executeQuery("SELECT FOUND_ROWS()");
@@ -193,7 +196,8 @@ public class AdminDAOImpl implements AdminDAO {
                 double balanceAmount = resultSet.getDouble(3);
                 int unblockRequest = resultSet.getInt(4);
                 String accountStatus = resultSet.getString(5);
-                accounts.add(new Account(id, balanceAmount, accountName, accountStatus, unblockRequest));
+                long cardNum = resultSet.getLong(6);
+                accounts.add(new Account(id, balanceAmount, accountName, accountStatus, unblockRequest, cardNum));
             }
             LOG.info("get all blocked accounts with request to unblock by admin");
             return accounts;

@@ -20,7 +20,7 @@ public class CustomerDAOImpl implements CustomerDAO {
     private static final String ADD_ACCOUNT = "INSERT accounts(account_name, balance_amount, Users_id) VALUES (?, ?, ?);";
     private static final String BLOCK_ACCOUNT = "UPDATE accounts set account_status = ? where Users_id = ? and id = ?;";
     private static final String REQUEST_TO_UNBLOCK_ACCOUNT = "UPDATE accounts set unblock_request = ? where Users_id = ? and id = ?;";
-    private static final String ADD_PAYMENT = "INSERT payments(price, payment_name, users_id) VALUES (?, ?, ?);";
+    private static final String ADD_PAYMENT = "insert payments(price, payment_name, users_id, account_number_received) VALUES (?, ?, ?, (SELECT card_id from accounts where card_id = ? limit 1));";
     private static final String MAKE_PAYMENT = "update accounts set balance_amount = balance_amount - (select price from payments where id = ? limit 1)  where id = ?;";
     private static final String UPDATE_PAYMENT_STATUS = "update payments set payment_status = 0 where id = ?;";
     private static final String REPLENISH_CARD = "update accounts set balance_amount = balance_amount + ? where id = ? and users_id = ?;";
@@ -157,12 +157,13 @@ public class CustomerDAOImpl implements CustomerDAO {
     }
 
     @Override
-    public boolean addPayment(int userId, String name, double price) {
+    public boolean addPayment(int userId, String name, double price, long receiveCard) {
         try (Connection con = ConnectionPool.getConnection()) {
             PreparedStatement preparedStatement = con.prepareStatement(ADD_PAYMENT);
             preparedStatement.setDouble(1, price);
             preparedStatement.setString(2, name);
             preparedStatement.setInt(3, userId);
+            preparedStatement.setLong(4, receiveCard);
             preparedStatement.executeUpdate();
             LOG.info("payment added");
             return true;
@@ -175,7 +176,7 @@ public class CustomerDAOImpl implements CustomerDAO {
     @Override
     public ArrayList<Account> getAccounts(User user, String sortBy, int offset, int noOfRecords) {
         ArrayList<Account> accounts = new ArrayList<>();
-        String query = "SELECT SQL_CALC_FOUND_ROWS id, account_name, balance_amount, unblock_request, account_status" +
+        String query = "SELECT SQL_CALC_FOUND_ROWS id, account_name, balance_amount, unblock_request, account_status, card_id" +
                 " FROM accounts WHERE Users_id = ? ORDER BY " + sortBy + " limit " + offset + ", " + noOfRecords + ";";
         try (Connection con = ConnectionPool.getConnection()) {
             PreparedStatement preparedStatement = con.prepareStatement(query);
@@ -188,7 +189,8 @@ public class CustomerDAOImpl implements CustomerDAO {
                 double balanceAmount = resultSet.getDouble(3);
                 int unblockRequest = resultSet.getInt(4);
                 String accountStatus = resultSet.getString(5);
-                accounts.add(new Account(id, balanceAmount, accountName, accountStatus, unblockRequest));
+                long cardNum = resultSet.getLong(6);
+                accounts.add(new Account(id, balanceAmount, accountName, accountStatus, unblockRequest, cardNum));
             }
             resultSet.close();
             resultSet = preparedStatement.executeQuery("SELECT FOUND_ROWS()");
@@ -206,8 +208,8 @@ public class CustomerDAOImpl implements CustomerDAO {
     @Override
     public ArrayList<Payment> getPayments(User user, String sortBy, int offset, int noOfRecords) {
         ArrayList<Payment> payments = new ArrayList<>();
-        String query = "SELECT SQL_CALC_FOUND_ROWS id, price, payment_name, creation_date, payment_status, account_id" +
-                " FROM payments WHERE users_id = ? ORDER BY " + sortBy + " limit " + offset + ", " + noOfRecords + ";";
+        String query = "SELECT SQL_CALC_FOUND_ROWS id, price, payment_name, creation_date, payment_status, " +
+                "account_number_received, account_number_sent FROM payments WHERE users_id = ? ORDER BY " + sortBy + " limit " + offset + ", " + noOfRecords + ";";
         try (Connection con = ConnectionPool.getConnection()) {
             PreparedStatement preparedStatement = con.prepareStatement(query);
             preparedStatement.setInt(1, user.getId());
@@ -219,8 +221,9 @@ public class CustomerDAOImpl implements CustomerDAO {
                 String paymentName = resultSet.getString(3);
                 Date date = resultSet.getDate(4);
                 int paymentStatus = resultSet.getInt(5);
-                int accountId = resultSet.getInt(6);
-                payments.add(new Payment(id, price, paymentName, date, paymentStatus, accountId));
+                long cardNumReceived = resultSet.getLong(6);
+                long cardNumSent = resultSet.getLong(7);
+                payments.add(new Payment(id, price, paymentName, date, paymentStatus, cardNumReceived, cardNumSent));
             }
             resultSet.close();
             resultSet = preparedStatement.executeQuery("SELECT FOUND_ROWS()");

@@ -11,6 +11,7 @@ public class DisplayAccount extends TagSupport {
     private String balance;
     private String status;
     private String unblockreq;
+    private String cardNum;
 
     public String getName() {
         return name;
@@ -52,6 +53,13 @@ public class DisplayAccount extends TagSupport {
         this.unblockreq = unblockreq;
     }
 
+    public String getCardNum() {
+        return cardNum;
+    }
+
+    public void setCardNum(String cardNum) {
+        this.cardNum = cardNum;
+    }
 
     @Override
     public int doStartTag() throws JspException {
@@ -63,6 +71,7 @@ public class DisplayAccount extends TagSupport {
             out.print(String.format("<td>%s</td>", index));
             out.print(String.format("<td>%s</td>", balance));
             out.print(String.format("<td>%s</td>", name));
+            out.print(String.format("<td>%s</td>", cardNum));
             out.print(String.format("<td>%s</td>", status));
             out.print(String.format("<td>%s</td>", unblockreq.equals("0") ? "not requested" : "requested"));
         } catch (IOException e) {
@@ -71,4 +80,6 @@ public class DisplayAccount extends TagSupport {
 
         return EVAL_BODY_INCLUDE;
     }
+
+
 }

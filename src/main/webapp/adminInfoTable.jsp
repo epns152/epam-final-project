@@ -73,6 +73,8 @@
             <td class="header__item"><fmt:message key="table.number"/></td>
             <td class="header__item"><fmt:message key="table.name"/></td>
             <td class="header__item"><fmt:message key="table.price"/></td>
+            <td class="header__item"><fmt:message key="table.receiveCard"/></td>
+            <td class="header__item"><fmt:message key="table.sendCard"/></td>
             <td class="header__item"><fmt:message key="table.status"/></td>
             <td class="header__item"><fmt:message key="table.date"/></td>
         </tr>
@@ -116,6 +118,7 @@
             <td class="header__item"><fmt:message key="table.number"/></td>
             <td class="header__item"><fmt:message key="table.balance"/></td>
             <td class="header__item"><fmt:message key="table.name"/></td>
+            <td class="header__item"><fmt:message key="table.cardNumber"/></td>
             <td class="header__item"><fmt:message key="table.status"/></td>
             <td class="header__item"><fmt:message key="table.request"/></td>
             <td class="header__item"><fmt:message key="table.blockUnblock"/></td>
@@ -126,7 +129,9 @@
                         index="${account.getId()}"
                         balance="${account.getBalance()}"
                         status="${account.getStatus()}"
-                        unblockreq="${account.getIsRequestedToUnblock()}"/>
+                        unblockreq="${account.getIsRequestedToUnblock()}"
+                        cardNum="${account.getCardNum()}"
+                />
                 <td>
                 <c:if test="${account.getStatus()=='unblocked'}">
                     <a href="/a-block-account?accountId=${account.getId()}&status=0"><fmt:message key="execute.blockAccount"/></a>

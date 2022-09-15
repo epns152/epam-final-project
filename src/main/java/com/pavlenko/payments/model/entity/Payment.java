@@ -13,15 +13,18 @@ public class Payment implements Serializable {
     private final String name;
     private final Date date;
     private final int paymentStatus;
-    private final int accountId;
+    private final long receivedCard;
+    private final long sentCard;
 
-    public Payment(int id, double price, String name, Date date, int paymentStatus, int accountId) {
+
+    public Payment(int id, double price, String name, Date date, int paymentStatus, long receivedCard, long sentCard) {
         this.id = id;
         this.price = price;
         this.name = name;
         this.date = date;
         this.paymentStatus = paymentStatus;
-        this.accountId = accountId;
+        this.receivedCard = receivedCard;
+        this.sentCard = sentCard;
     }
 
     public int getId() {
@@ -43,15 +46,12 @@ public class Payment implements Serializable {
     public String getName() {
         return name;
     }
+    public long getReceivedCard() {
+        return receivedCard;
+    }
 
-    @Override
-    public String toString() {
-        return "Payment{" +
-                "price=" + price +
-                ", name='" + name + '\'' +
-                ", date=" + date +
-                ", paymentStatus='" + paymentStatus + '\'' +
-                '}';
+    public long getSentCard() {
+        return sentCard;
     }
 
     @Override
@@ -59,11 +59,24 @@ public class Payment implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Payment payment = (Payment) o;
-        return id == payment.id && Double.compare(payment.price, price) == 0 && paymentStatus == payment.paymentStatus && accountId == payment.accountId && Objects.equals(name, payment.name) && Objects.equals(date, payment.date);
+        return id == payment.id && Double.compare(payment.price, price) == 0 && paymentStatus == payment.paymentStatus && receivedCard == payment.receivedCard && sentCard == payment.sentCard && Objects.equals(name, payment.name) && Objects.equals(date, payment.date);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, price, name, date, paymentStatus, accountId);
+        return Objects.hash(id, price, name, date, paymentStatus, receivedCard, sentCard);
+    }
+
+    @Override
+    public String toString() {
+        return "Payment{" +
+                "id=" + id +
+                ", price=" + price +
+                ", name='" + name + '\'' +
+                ", date=" + date +
+                ", paymentStatus=" + paymentStatus +
+                ", receivedCard=" + receivedCard +
+                ", sentCard=" + sentCard +
+                '}';
     }
 }
