@@ -13,7 +13,7 @@ import java.io.IOException;
 
 @WebFilter(urlPatterns = {"/accounts-to-unblock", "/a-block-account", "/block-user", "/user-accounts",
                     "/user-payments", "/users", "/add-account", "/add-payment", "/discard",
-                    "/block-account", "/make-payment", "/accounts", "/payments", "/profile", "/request-to-unblock"})
+                    "/block-account", "/make-payment", "/accounts", "/payments", "/profile", "/request-to-unblock", "/replenish"})
 public class AuthFilter implements Filter {
 
     private static final Logger LOG = LoggerFactory.getLogger(AuthFilter.class);

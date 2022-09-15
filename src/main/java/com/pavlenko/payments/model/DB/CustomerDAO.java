@@ -102,6 +102,9 @@ public interface CustomerDAO {
      */
     boolean makePayment(int accountId, int paymentId);
 
+    boolean replenishAccount(int accountId, int userId, double topUpAmount);
+
+
     /**
      * @return  the number of accounts that come after those that were taken from the database
      */

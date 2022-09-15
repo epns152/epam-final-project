@@ -12,7 +12,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 @WebFilter(urlPatterns = {"/add-account", "/add-payment", "/discard",
-        "/block-account", "/make-payment", "/accounts", "/payments", "/request-to-unblock"})
+        "/block-account", "/make-payment", "/accounts", "/payments", "/request-to-unblock", "/replenish"})
 public class UserFilter implements Filter {
 
     private static final Logger LOG = LoggerFactory.getLogger(UserFilter.class);

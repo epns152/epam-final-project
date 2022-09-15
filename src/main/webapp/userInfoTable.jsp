@@ -31,6 +31,7 @@
                 <td class="header__item"><fmt:message key="table.status"/></td>
                 <td class="header__item"><fmt:message key="table.request"/></td>
                 <td class="header__item"><fmt:message key="table.requestOrBlock"/></td>
+                <td class="header__item"><fmt:message key="table.replenish"/></td>
             </tr>
         <c:forEach var="account" items="${accounts}">
             <my:acc name="${account.getName()}"
@@ -41,9 +42,12 @@
                 <td>
                     <c:if test="${paymentId!=null && account.getStatus()=='unblocked'}">
                         <c:choose>
-                            <c:when test="${sessionScope.paymentPrice < account.getBalance()}">
+                            <c:when test="${sessionScope.paymentPrice < account.getBalance() && account.getStatus()=='unblocked'}">
                                 <a href="make-payment?paymentId=${sessionScope.paymentId}&accountId=${account.getId()}"><fmt:message key="table.makePayment"/></a>
                             </c:when>
+<%--                            <c:otherwise>--%>
+<%--                                <p><fmt:message key="message.notEnough"/></p>--%>
+<%--                            </c:otherwise>--%>
                             <c:otherwise>
                                 <p><fmt:message key="message.notEnough"/></p>
                             </c:otherwise>
@@ -55,6 +59,13 @@
                 <c:if test="${account.getIsRequestedToUnblock() == 0 && account.getStatus()=='blocked'}">
                     <a href="request-to-unblock?accountId=${account.getId()}"><fmt:message key="execute.requestToUnblockAccount"/></a>
                 </c:if>
+                </td>
+                <td>
+                    <form action="replenish" method="post">
+                        <input type="text" name="topUpAmount" pattern="\d+\.\d*|\d{1,5}" title="Example : 123 or 123.123">
+                        <input name="accountId" type="number" value="${account.getId()}" hidden/>
+                        <button type="submit"><fmt:message key="label.replenish"/></button>
+                    </form>
                 </td>
             </tr>
         </c:forEach>

@@ -182,3 +182,12 @@ div.hidden.show {
     left: 45%;
     text-align: -webkit-center;
 }
+
+.header-right {
+    padding: 15px 0;
+}
+
+.menu-item {
+    margin-right: 30px;
+}
+

@@ -17,6 +17,13 @@ public class AdminDAOImpl implements AdminDAO {
     private int noOfRecordsUsers;
 
     private static final String BLOCK_USER = "update users set user_status = 'blocked' where id = ?";
+    private static final String GET_ALL_USER_PAYMENTS = "SELECT SQL_CALC_FOUND_ROWS id, price, payment_name, creation_date, payment_status, account_id " +
+            "FROM payments WHERE users_id = ? limit ?, ?;";
+
+    private static final String GET_ALL_USER_ACCOUNTS = "SELECT SQL_CALC_FOUND_ROWS id, account_name, balance_amount, unblock_request, account_status " +
+            "FROM accounts WHERE Users_id = ? limit ?, ?;";
+    private static final String GET_ALL_USERS = "SELECT SQL_CALC_FOUND_ROWS id, firstname, lastname, user_status, user_role, registration_date " +
+            "FROM users WHERE user_role = 'customer' limit ?, ?;";
     private static final String UNBLOCK_USER = "update users set user_status = 'unblocked' where id = ?";
     private static final String BLOCK_ACCOUNT = "update accounts set account_status = 'blocked' where id = ?";
     private static final String UNBLOCK_ACCOUNT = "update accounts set account_status = 'unblocked', unblock_request = 0 where id = ?";
@@ -27,10 +34,10 @@ public class AdminDAOImpl implements AdminDAO {
     @Override
     public ArrayList<User> getAllUsers(int offset, int noOfRecords) {
         ArrayList<User> users = new ArrayList<>();
-        String query = "SELECT SQL_CALC_FOUND_ROWS id, firstname, lastname, user_status, user_role, registration_date " +
-                "FROM users WHERE user_role = 'customer' limit " + offset + ", " + noOfRecords + ";";
         try (Connection con = ConnectionPool.getConnection()) {
-            PreparedStatement preparedStatement = con.prepareStatement(query);
+            PreparedStatement preparedStatement = con.prepareStatement(GET_ALL_USERS);
+            preparedStatement.setInt(1, offset);
+            preparedStatement.setInt(2, noOfRecords);
             ResultSet resultSet;
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
@@ -58,11 +65,11 @@ public class AdminDAOImpl implements AdminDAO {
     @Override
     public ArrayList<Payment> getAllUserPayments(int userId, int offset, int noOfRecords) {
         ArrayList<Payment> payments = new ArrayList<>();
-        String query = "SELECT SQL_CALC_FOUND_ROWS id, price, payment_name, creation_date, payment_status, account_id " +
-                "FROM payments WHERE users_id = ? limit " + offset + ", " + noOfRecords + ";";
         try (Connection con = ConnectionPool.getConnection()) {
-            PreparedStatement preparedStatement = con.prepareStatement(query);
+            PreparedStatement preparedStatement = con.prepareStatement(GET_ALL_USER_PAYMENTS);
             preparedStatement.setInt(1, userId);
+            preparedStatement.setInt(2, offset);
+            preparedStatement.setInt(3, noOfRecords);
             ResultSet resultSet;
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
@@ -91,10 +98,8 @@ public class AdminDAOImpl implements AdminDAO {
     @Override
     public ArrayList<Account> getAllUserAccounts(int userId, int offset, int noOfRecords) {
         ArrayList<Account> accounts = new ArrayList<>();
-        String query = "SELECT SQL_CALC_FOUND_ROWS id, account_name, balance_amount, unblock_request, account_status " +
-                "FROM accounts WHERE Users_id = ? limit " + offset + ", " + noOfRecords + ";";
         try (Connection con = ConnectionPool.getConnection()) {
-            PreparedStatement preparedStatement = con.prepareStatement(query);
+            PreparedStatement preparedStatement = con.prepareStatement(GET_ALL_USER_ACCOUNTS);
             preparedStatement.setInt(1, userId);
             ResultSet resultSet;
             resultSet = preparedStatement.executeQuery();

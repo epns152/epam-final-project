@@ -22,6 +22,8 @@ public class CustomerDAOImpl implements CustomerDAO {
     private static final String REQUEST_TO_UNBLOCK_ACCOUNT = "UPDATE accounts set unblock_request = ? where Users_id = ? and id = ?;";
     private static final String ADD_PAYMENT = "INSERT payments(price, payment_name, users_id) VALUES (?, ?, ?);";
     private static final String MAKE_PAYMENT = "update accounts set balance_amount = balance_amount - (select price from payments where id = ? limit 1)  where id = ?;";
+    private static final String UPDATE_PAYMENT_STATUS = "update payments set payment_status = 0 where id = ?;";
+    private static final String REPLENISH_CARD = "update accounts set balance_amount = balance_amount + ? where id = ? and users_id = ?;";
 
 
 
@@ -243,7 +245,7 @@ public class CustomerDAOImpl implements CustomerDAO {
             preparedStatement.setInt(1, paymentId);
             preparedStatement.setInt(2, accountId);
             preparedStatement.executeUpdate();
-            preparedStatement = con.prepareStatement("update payments set payment_status = 0 where id = ?;");
+            preparedStatement = con.prepareStatement(UPDATE_PAYMENT_STATUS);
             preparedStatement.setInt(1, paymentId);
             preparedStatement.executeUpdate();
             con.commit();
@@ -268,6 +270,23 @@ public class CustomerDAOImpl implements CustomerDAO {
             } catch (SQLException e) {
                 LOG.error("sql exception", e);
             }
+        }
+    }
+
+    @Override
+    public boolean replenishAccount(int accountId, int userId, double topUpAmount) {
+//        "update accounts set balance_amount = balance_amount + ? where id = ? and users_id = ?;"
+        try (Connection con = ConnectionPool.getConnection()) {
+            PreparedStatement preparedStatement = con.prepareStatement(REPLENISH_CARD);
+            preparedStatement.setDouble(1, topUpAmount);
+            preparedStatement.setInt(2, accountId);
+            preparedStatement.setInt(3, userId);
+            preparedStatement.executeUpdate();
+            LOG.info("account replenished");
+            return true;
+        } catch (SQLException e) {
+            LOG.error("sql exception", e);
+            throw new RuntimeException("Sql exc", e);
         }
     }
 
