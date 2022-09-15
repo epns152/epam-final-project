@@ -31,15 +31,17 @@ class AddPaymentTest {
 
         when(session.getAttribute("user")).thenReturn(user);
 
-        when(dao.addPayment(anyInt(), anyString(), anyInt())).thenReturn(true);
+        when(dao.addPayment(anyInt(), anyString(), anyInt(), anyLong())).thenReturn(true);
         when(req.getParameter("price")).thenReturn("0");
         when(req.getParameter("name")).thenReturn("namename");
+        when(req.getParameter("receiveCard")).thenReturn("123123");
+
 
         servlet.doPost(req, resp);
 
         verify(req, times(1)).getSession();
         verify(req, times(1)).getAttribute("customerDAO");
-        verify(req, times(2)).getParameter(anyString());
+        verify(req, times(3)).getParameter(anyString());
         verify(resp, times(1)).sendRedirect(anyString());
     }
 
@@ -58,15 +60,16 @@ class AddPaymentTest {
 
         when(session.getAttribute("user")).thenReturn(user);
 
-        when(dao.addPayment(anyInt(), anyString(), anyDouble())).thenThrow(RuntimeException.class);
+        when(dao.addPayment(anyInt(), anyString(), anyDouble(), anyLong())).thenThrow(RuntimeException.class);
         when(req.getParameter("price")).thenReturn("0");
         when(req.getParameter("name")).thenReturn("namename");
+        when(req.getParameter("receiveCard")).thenReturn("123123");
 
         servlet.doPost(req, resp);
 
         verify(req, times(1)).getSession();
         verify(req, times(1)).getAttribute("customerDAO");
-        verify(req, times(2)).getParameter(anyString());
+        verify(req, times(3)).getParameter(anyString());
         verify(resp, times(1)).sendError(500, "Sorry, something went wrong...(((");
     }
 }

@@ -6,9 +6,9 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 class AccountTest {
 
-    Account account = new Account(1, 100.0, "name", "blocked", 1);
-    Account second = new Account(1, 100.0, "name", "blocked", 1);
-    Account third = new Account(2, 100.0, "name", "blocked", 1);
+    Account account = new Account(1, 100.0, "name", "blocked", 1, 1);
+    Account second = new Account(1, 100.0, "name", "blocked", 1, 1);
+    Account third = new Account(2, 100.0, "name", "blocked", 1, 3);
 
     @Test
     void getId() {
@@ -37,7 +37,7 @@ class AccountTest {
 
     @Test
     void toStringTest() {
-        assertThat(account.toString()).isEqualTo("Account{id=1, balance=100.0, name='name', status='blocked', isRequestedToUnblock=1}");
+        assertThat(account.toString()).isEqualTo("Account{id=1, balance=100.0, name='name', status='blocked', isRequestedToUnblock=1, cardNum=1}");
     }
 
     @Test

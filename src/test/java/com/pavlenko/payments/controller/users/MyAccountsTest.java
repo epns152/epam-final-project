@@ -39,15 +39,17 @@ class MyAccountsTest {
         when(req.getAttribute("customerDAO")).thenReturn(dao);
 
         when(session.getAttribute("user")).thenReturn(user);
+        when(session.getAttribute("accounts-page")).thenReturn(1);
+        when(session.getAttribute("accounts-sorted-by")).thenReturn("id");
 
         when(service.getAccountsSortedBy(user, eq(anyString()), anyInt(), anyInt())).thenReturn(accounts);
         when(req.getRequestDispatcher(anyString())).thenReturn(dispatcher);
 
         servlet.doGet(req, resp);
 
-        verify(req, times(2)).getSession();
+        verify(req, times(6)).getSession();
         verify(req, times(1)).getAttribute("customerDAO");
-        verify(req, times(4)).getParameter(anyString());
+        verify(req, times(8)).getParameter(anyString());
 
         assertThat(service.getAccountsSortedBy(user, eq(anyString()), anyInt(), anyInt())).isEqualTo(accounts);
     }

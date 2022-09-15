@@ -39,11 +39,14 @@ class MyPaymentsTest {
         when(service.getPaymentsSortedBy(user, eq(anyString()), anyInt(), anyInt())).thenReturn(payments);
         when(req.getRequestDispatcher(anyString())).thenReturn(dispatcher);
 
+        when(session.getAttribute("payments-page")).thenReturn(1);
+        when(session.getAttribute("payments-sorted-by")).thenReturn("id");
+
         servlet.doGet(req, resp);
 
-        verify(req, times(2)).getSession();
+        verify(req, times(6)).getSession();
         verify(req, times(1)).getAttribute("customerDAO");
-        verify(req, times(2)).getParameter(anyString());
+        verify(req, times(6)).getParameter(anyString());
 
         assertThat(service.getPaymentsSortedBy(user, eq(anyString()), anyInt(), anyInt())).isEqualTo(payments);
     }

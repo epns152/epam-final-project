@@ -43,9 +43,9 @@ class UserAccountsTest {
 
         servlet.doGet(req, resp);
 
-        verify(req, times(3)).getSession();
+        verify(req, times(5)).getSession();
         verify(req, times(1)).getAttribute("adminDAO");
-        verify(req, times(4)).getParameter(anyString());
+        verify(req, times(5)).getParameter(anyString());
 
         assertThat(dao.getAllUserPayments(anyInt(), anyInt(), anyInt())).isEqualTo(accounts);
     }
@@ -70,8 +70,8 @@ class UserAccountsTest {
 
         servlet.doGet(req, resp);
 
-        verify(req, times(2)).getSession();
+        verify(req, times(4)).getSession();
         verify(req, times(1)).getAttribute("adminDAO");
-        verify(req, times(4)).getParameter(anyString());
+        verify(req, times(5)).getParameter(anyString());
     }
 }
