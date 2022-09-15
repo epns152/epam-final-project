@@ -21,11 +21,11 @@ public class CustomerDAOImpl implements CustomerDAO {
     private static final String BLOCK_ACCOUNT = "UPDATE accounts set account_status = ? where Users_id = ? and id = ?;";
     private static final String REQUEST_TO_UNBLOCK_ACCOUNT = "UPDATE accounts set unblock_request = ? where Users_id = ? and id = ?;";
     private static final String ADD_PAYMENT = "insert payments(price, payment_name, users_id, account_number_received) VALUES (?, ?, ?, (SELECT card_id from accounts where card_id = ? limit 1));";
-    private static final String MAKE_PAYMENT = "update accounts set balance_amount = balance_amount - (select price from payments where id = ? limit 1)  where id = ?;";
-    private static final String UPDATE_PAYMENT_STATUS = "update payments set payment_status = 0 where id = ?;";
+    private static final String MAKE_PAYMENT_WITHDRAWAL = "update accounts set balance_amount = balance_amount - (select price from payments where id = ? limit 1)  where id = ?;";
+    private static final String MAKE_PAYMENT_REPLENISHMENT = "update accounts set balance_amount = balance_amount + (select price from payments where id = ? limit 1)  where id = ?;";
+    private static final String SELECT_RECEIVED_ACCOUNT_ID = "select id from accounts where card_id = (select account_number_received from payments where id = ? limit 1);";
+    private static final String UPDATE_PAYMENT_STATUS = "update payments set account_number_sent = (select card_id from accounts where id = ? limit 1), payment_status = 0 where id = ?";
     private static final String REPLENISH_CARD = "update accounts set balance_amount = balance_amount + ? where id = ? and users_id = ?;";
-
-
 
     @Override
     public User getAllInfo(User user) {
@@ -240,16 +240,34 @@ public class CustomerDAOImpl implements CustomerDAO {
 
     @Override
     public boolean makePayment(int accountId, int paymentId) {
+//        private static final String ADD_PAYMENT = "insert payments(price, payment_name, users_id, account_number_received) VALUES (?, ?, ?, (SELECT card_id from accounts where card_id = ? limit 1));";
+//        private static final String MAKE_PAYMENT_WITHDRAWAL = "update accounts set balance_amount = balance_amount - (select price from payments where id = ? limit 1)  where id = ?;";
+//        private static final String MAKE_PAYMENT_REPLENISHMENT = "update accounts set balance_amount = balance_amount + (select price from payments where id = ? limit 1)  where id = ?;";
+//        private static final String SELECT_RECEIVED_ACCOUNT_ID = "select id from accounts where card_id = (select account_number_received from payments where id = ? limit 1);";
+//        private static final String UPDATE_PAYMENT_STATUS = "update payments set account_number_sent = (select card_id from accounts where id = ? limit 1), payment_status = 0 where id = ?";
+
         Connection con = null;
         try {
+            int receivedId = 0;
             con = ConnectionPool.getConnection();
             con.setAutoCommit(false);
-            PreparedStatement preparedStatement = con.prepareStatement(MAKE_PAYMENT);
+            PreparedStatement preparedStatement = con.prepareStatement(MAKE_PAYMENT_WITHDRAWAL);
             preparedStatement.setInt(1, paymentId);
             preparedStatement.setInt(2, accountId);
             preparedStatement.executeUpdate();
-            preparedStatement = con.prepareStatement(UPDATE_PAYMENT_STATUS);
+            preparedStatement = con.prepareStatement(SELECT_RECEIVED_ACCOUNT_ID);
             preparedStatement.setInt(1, paymentId);
+            ResultSet rs = preparedStatement.executeQuery();
+            if (rs.next()) {
+                receivedId = rs.getInt(1);
+            }
+            preparedStatement = con.prepareStatement(MAKE_PAYMENT_REPLENISHMENT);
+            preparedStatement.setInt(1, paymentId);
+            preparedStatement.setInt(2, receivedId);
+            preparedStatement.executeUpdate();
+            preparedStatement = con.prepareStatement(UPDATE_PAYMENT_STATUS);
+            preparedStatement.setInt(1, accountId);
+            preparedStatement.setInt(2, paymentId);
             preparedStatement.executeUpdate();
             con.commit();
             LOG.info("payment made");
@@ -278,7 +296,6 @@ public class CustomerDAOImpl implements CustomerDAO {
 
     @Override
     public boolean replenishAccount(int accountId, int userId, double topUpAmount) {
-//        "update accounts set balance_amount = balance_amount + ? where id = ? and users_id = ?;"
         try (Connection con = ConnectionPool.getConnection()) {
             PreparedStatement preparedStatement = con.prepareStatement(REPLENISH_CARD);
             preparedStatement.setDouble(1, topUpAmount);
