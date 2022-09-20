@@ -13,8 +13,7 @@ import java.io.IOException;
 @WebServlet(name = "Lang", value = "/lang")
 public class Lang extends HttpServlet {
 
-    private static final Logger LOG = LoggerFactory.getLogger(Login.class);
-
+    private static final Logger LOG = LoggerFactory.getLogger(Lang.class);
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
