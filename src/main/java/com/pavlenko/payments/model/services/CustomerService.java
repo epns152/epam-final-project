@@ -30,16 +30,25 @@ public class CustomerService {
      */
     public ArrayList<Account> getAccountsSortedBy(User user, String sortBy, int offset, int noOfRecords) {
         ArrayList<Account> accounts;
-        if (sortBy.equals("balance")) {
-            accounts = dao.getAccounts(user, "balance_amount", offset, noOfRecords);
-            LOG.info("made sql statement (balance_amount)");
-        } else if (sortBy.equals("name")) {
-            accounts = dao.getAccounts(user, "account_name", offset, noOfRecords);
-            LOG.info("made sql statement (account_name)");
-        } else {
-            accounts = dao.getAccounts(user, "id", offset, noOfRecords);
-            LOG.info("made sql statement (id)");
+        switch (sortBy) {
+            case "balance":
+                accounts = dao.getAccounts(user, "balance_amount", offset, noOfRecords);
+                LOG.info("made sql statement (balance_amount)");
+                break;
+            case "name":
+                accounts = dao.getAccounts(user, "account_name", offset, noOfRecords);
+                LOG.info("made sql statement (account_name)");
+                break;
+            case "number":
+                accounts = dao.getAccounts(user, "card_id", offset, noOfRecords);
+                LOG.info("made sql statement (number)");
+                break;
+            default:
+                accounts = dao.getAccounts(user, "id", offset, noOfRecords);
+                LOG.info("made sql statement (id)");
+                break;
         }
+
         return accounts;
     }
 
@@ -55,15 +64,23 @@ public class CustomerService {
      */
     public ArrayList<Payment> getPaymentsSortedBy(User user, String sortBy, int offset, int noOfRecords) {
         ArrayList<Payment> payments;
-        if (sortBy.equals("price")) {
-            payments = dao.getPayments(user, sortBy, offset, noOfRecords);
-            LOG.info("made sql statement (price)");
-        } else if (sortBy.equals("date")) {
-            payments = dao.getPayments(user, "creation_date", offset, noOfRecords);
-            LOG.info("made sql statement (creation_date)");
-        } else {
-            payments = dao.getPayments(user, "id", offset, noOfRecords);
-            LOG.info("made sql statement (id)");
+        switch (sortBy) {
+            case "price":
+                payments = dao.getPayments(user, sortBy, offset, noOfRecords);
+                LOG.info("made sql statement (price)");
+                break;
+            case "date":
+                payments = dao.getPayments(user, "creation_date", offset, noOfRecords);
+                LOG.info("made sql statement (creation_date)");
+                break;
+            case "date-desc":
+                payments = dao.getPayments(user, "creation_date DESC", offset, noOfRecords);
+                LOG.info("made sql statement (creation_date)");
+                break;
+            default:
+                payments = dao.getPayments(user, "id", offset, noOfRecords);
+                LOG.info("made sql statement (id)");
+                break;
         }
         return payments;
     }

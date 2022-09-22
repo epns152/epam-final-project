@@ -12,12 +12,12 @@
     <c:when test="${accounts!=null}">
         <div class="container">
         <p><fmt:message key="label.sortBy"/>
-            <a href="accounts?sorted-by=id">
+            <a href="accounts?sorted-by=number">
                 <fmt:message key="button.number"/>
-            </a>
+            </a> |
             <a href="accounts?sorted-by=balance">
                 <fmt:message key="button.balance"/>
-            </a>
+            </a> |
             <a href="accounts?sorted-by=name">
                 <fmt:message key="button.name"/>
             </a>
@@ -117,12 +117,15 @@
         <p><fmt:message key="label.sortBy"/>
             <a href="payments?sorted-by=id">
                 <fmt:message key="button.number"/>
-            </a>
+            </a> |
             <a href="payments?sorted-by=price">
                 <fmt:message key="table.price"/>
-            </a>
+            </a> |
             <a href="payments?sorted-by=date">
                 <fmt:message key="table.date"/>
+            </a> |
+            <a href="payments?sorted-by=date-desc">
+                <fmt:message key="table.date-desc"/>
             </a>
         </p>
         <table>
